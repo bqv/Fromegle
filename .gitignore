@@ -59,4 +59,7 @@ ui_*.h
 .*.swp
 .*.swo
 fromegle
+<<<<<<< HEAD
 Makefile
+=======
+>>>>>>> 73db288f6dcb9c38044e37eb10e2905572e1226e
