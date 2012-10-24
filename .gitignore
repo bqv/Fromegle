@@ -53,13 +53,10 @@ moc_*.cpp
 qrc_*.cpp
 ui_*.h
 *.pro
+Makefile
 
 # Custom
 .gitignore
 .*.swp
 .*.swo
 fromegle
-<<<<<<< HEAD
-Makefile
-=======
->>>>>>> 73db288f6dcb9c38044e37eb10e2905572e1226e
