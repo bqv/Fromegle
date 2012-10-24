@@ -48,7 +48,15 @@ pip-log.txt
 # Translations
 *.mo
 
+# Qt Files
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+*.pro
+
 # Custom
 .gitignore
 .*.swp
 .*.swo
+fromegle
+Makefile
