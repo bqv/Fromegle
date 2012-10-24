@@ -4,9 +4,49 @@
 *.o
 
 # Compiled Dynamic libraries
+*.dll
 *.so
+*.so.*
+*.dylib
 
 # Compiled Static libraries
+*.lib
 *.lai
 *.la
 *.a
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Compiled Bytecode
+*.class
+*.py[cod]
+
+# Package Files
+*.jar
+*.war
+*.ear
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Translations
+*.mo
+
+# Custom
+.gitignore
