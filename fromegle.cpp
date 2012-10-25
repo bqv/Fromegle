@@ -1,24 +1,41 @@
 #include "selector.h"
 
-Selector::Selector(QWidget *parent) : QWidget(parent)
+void Selector::updateCount(int cnt)
 {
-	const int X = 16;
-	const int Y = 16;
-	const int W = 128;
-	const int H = 32;
+	count = cnt;
+}
+void Selector::updateServers(int cnt, QString srv[])
+{
+	if(cnt > 8) return;
+	for(int i=0; i < cnt; i++) //could just use cnt here...
+	{
+		servers[i] = srv[i];
+	}
+	serverct = cnt;
+}
 
-	QPushButton *text = new QPushButton("Text Chat", this);
+Selector::Selector(QWidget *parent) : QWidget(parent),
+									  X(16), Y(16),
+									  W(128), H(32),
+									  poller(new PollThread())
+{
+	servers = new QString[8];
+	QPushButton *text = new QPushButton("&Text Chat", this);
 	text->setGeometry(X, Y, W, H-2);
+	text->setToolTip("Talk to Strangers!");
 
-	QPushButton *spye = new QPushButton("Spy Mode", this);
+	QPushButton *spye = new QPushButton("&Spy Mode", this);
 	spye->setGeometry(X, Y+(H), W, H-2);
+	spye->setToolTip("Answer questions with another stranger!");
 
-	QPushButton *quest = new QPushButton("Question Mode", this);
+	QPushButton *quest = new QPushButton("&Question Mode", this);
 	quest->setGeometry(X, Y+(2*H), W, H-2);
+	quest->setToolTip("Watch two strangers discuss your question!");
 
-	QPushButton *video = new QPushButton("Video Chat", this);
+	QPushButton *video = new QPushButton("&Video Chat", this);
 	video->setGeometry(X, Y+(3*H), W, H-2);
 	video->setEnabled(false);
+	quest->setToolTip("Video Chat with Strangers!");
 
 	connect(text, SIGNAL(clicked()), this, SLOT(initText()));
 	connect(spye, SIGNAL(clicked()), this, SLOT(initSpye()));
@@ -26,10 +43,6 @@ Selector::Selector(QWidget *parent) : QWidget(parent)
 	connect(video, SIGNAL(clicked()), this, SLOT(initVideo()));
 }
 
-void Selector::initText()
-{
-	std::cout << "Entering Text Mode..." << std::endl;
-}
 void Selector::initSpye()
 {
 	std::cout << "Entering Spy Mode..." << std::endl;
@@ -42,11 +55,14 @@ void Selector::initVideo()
 {
 	std::cout << "Entering Video Mode..." << std::endl;
 	std::cout << "ERROR: Not Implemented!" << std::endl;
+	QMessageBox *e = new QMessageBox(this);
+	e->setText("ERROR");
+	e->setInformativeText("Not Implemented!\n\nAnd how did you even get here?!");
+	e->show();
 }
 
 int main(int argc, char *argv[])
 {
-
 	const int WIDTH = 158;
 	const int HEIGHT = 160;
 
@@ -56,11 +72,8 @@ int main(int argc, char *argv[])
 
 	QDesktopWidget *desktop = QApplication::desktop();
 
-	int screenWidth = desktop->width();
-	int screenHeight = desktop->height();
-
-	int x = (screenWidth - WIDTH) / 2;
-	int y = (screenHeight - HEIGHT) / 2;
+	int x = (desktop->width() - WIDTH) / 2;
+	int y = (desktop->height() - HEIGHT) / 2;
 
 	selector.setFixedSize(WIDTH, HEIGHT);
 	selector.move(x, y);

@@ -2,12 +2,52 @@
 
 Connection::Connection(QString url) : params(0)
 {
+	data = new kvpair[5];
 	server = url;
 }
 
 Connection::~Connection()
 {
 	;
+}
+
+bool Connection::addParam(QString key, QString value)
+{
+	if(params >= sizeof(*data)/sizeof(kvpair))
+	{
+		std::cout << "FIXME: kvpair data[] too small. Index out of bounds." << std::endl;
+		return false;
+	}
+	data[params].value = value;
+	data[params++].key = key;
+	return true;
+}
+
+QByteArray Connection::get(QString location)
+{
+	loc = location;
+	sendReq(false);
+	
+	while(!done);
+
+	return response;
+}
+
+QByteArray Connection::post(QString location)
+{
+	loc = location;
+	sendReq(true);
+	params = 0;
+
+	while(!done);
+
+	return response;
+}
+
+void Connection::httpDone()
+{
+	response = reply->readAll();
+	done = true;
 }
 
 QByteArray* Connection::compileData()
@@ -24,7 +64,7 @@ QByteArray* Connection::compileData()
 
 void Connection::sendReq(bool post)
 {
-	QUrl url = server.append(loc);
+	QUrl url = (new QString(server))->append(loc);
 	if(post)
 	{
 		QByteArray *payld = compileData();
@@ -32,19 +72,6 @@ void Connection::sendReq(bool post)
 		delete payld;
 	}
 	else reply = qnam.get(QNetworkRequest(url));
-	connect(reply, SIGNAL(finished()),
-			this, SLOT(httpDone()));
-	connect(reply, SIGNAL(readyRead()),
-			this, SLOT(httpRead()));
-	params = 0;
-}
 
-void Connection::httpRead()
-{
-	;
-}
-
-void Connection::httpDone()
-{
-	;
+	connect(reply, SIGNAL(finished()), this, SLOT(httpDone()));
 }

@@ -17,27 +17,27 @@ class Connection : public QObject
 {
 	Q_OBJECT
 	public:
-		Connection(QString url);
+		Connection(QString);
 		~Connection();
-		void addParam();
-		void get(QString location);
-		void post(QString location);
-		void getEvent();
 
+		bool addParam(QString, QString);
+		QByteArray get(QString);
+		QByteArray post(QString);
 
 	private slots:
-		void httpRead();
 		void httpDone();
 
 	private:
 		QNetworkAccessManager qnam;
+		unsigned short params;
 		QNetworkReply *reply;
+		QByteArray response;
 		QString server;
+		kvpair *data;
 		QString loc;
-		kvpair data[5];
-		int params;
+		bool done;
 
-		void sendReq(bool post);
+		void sendReq(bool);
 		QByteArray* compileData();
 };
 
