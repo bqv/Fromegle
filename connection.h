@@ -16,11 +16,13 @@ struct kvpair {
 class Connection : public QObject
 {
 	Q_OBJECT
+
 	public:
 		Connection(QString);
+		Connection();
 		~Connection();
 
-		bool addParam(QString, QString);
+		Connection* addParam(QString, QString);
 		QByteArray get(QString);
 		QByteArray post(QString);
 

@@ -1,6 +1,9 @@
 #ifndef _POLL_H_
 #define _POLL_H_
 
+#include <QString>
+#include <QThread>
+
 #include "connection.h"
 
 class PollThread : public QThread
@@ -8,7 +11,7 @@ class PollThread : public QThread
 	Q_OBJECT
 
 	public:
-		PollThread(QObject *parent = 0);
+		PollThread();
 		~PollThread();
 	
 	protected:
@@ -16,7 +19,7 @@ class PollThread : public QThread
 
 	private:
 		bool active;
-		Connection conn;
+		Connection *conn;
 };
 
 #endif

@@ -17,7 +17,7 @@ void Selector::updateServers(int cnt, QString srv[])
 Selector::Selector(QWidget *parent) : QWidget(parent),
 									  X(16), Y(16),
 									  W(128), H(32),
-									  poller(new PollThread())
+									  poller()
 {
 	servers = new QString[8];
 	QPushButton *text = new QPushButton("&Text Chat", this);

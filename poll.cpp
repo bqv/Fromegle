@@ -1,9 +1,9 @@
 #include "poll.h"
 
-PollThread::PollThread(QObject *parent) : QThread(parent),
-										  active(true)
+PollThread::PollThread() : QThread(),
+						   active(true),
+						   conn()
 {
-	conn = new Connection(new QString("www.omegle.com"));
 	start();
 }
 
@@ -15,5 +15,9 @@ PollThread::~PollThread()
 
 void PollThread::run()
 {
-	;
+	while(active)
+	{
+		usleep(30000);
+		conn->get("/status");
+	}
 }
