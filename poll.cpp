@@ -14,9 +14,9 @@ PollThread::~PollThread()
 	;
 }
 
-void parse(QByteArray json)
+void PollThread::parse(QByteArray json)
 {
-	std::cout << json << "\033[47;30m%" << std::endl;
+	std::cout << json.data() << "\033[47;30m%" << std::endl;
 }
 
 void PollThread::work()

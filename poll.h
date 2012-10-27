@@ -23,7 +23,7 @@ class PollThread : public QObject
 	public:
 		PollThread();
 		~PollThread();
-		void parse();
+		void parse(QByteArray);
 	
 	public slots:
 		void work();
