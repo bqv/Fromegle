@@ -17,6 +17,8 @@ PollThread::~PollThread()
 void PollThread::parse(QByteArray json)
 {
 	std::cout << json.data() << "\033[38;3;1;255m%\033[0m" << std::endl;
+	json.truncate(json.indexOf(","));
+	emit count(json.right(json.size()-json.lastIndexOf(" ")-1).toLong());
 }
 
 void PollThread::work()
@@ -27,7 +29,7 @@ void PollThread::work()
 		QByteArray data = conn->get("/status").data();
 		if(data.isEmpty() || data.endsWith("null")) emit error("Bad response from status");
 		else parse(data);
-		thread.sleep(30);
+		thread.sleep(10);
 	}
 }
 

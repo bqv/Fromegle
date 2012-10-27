@@ -30,6 +30,8 @@ class PollThread : public QObject
 		void stop();
 	
 	signals:
+		void count(long);
+		//void servers(QStringList);
 		void error(QString);
 
 	private:

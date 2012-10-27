@@ -1,9 +1,14 @@
 #include "selector.h"
 
-void Selector::updateCount(int cnt)
+void Selector::updateCount(long cnt)
 {
 	count = cnt;
+	QString title = "Fromegle - ";
+	title.append(QLocale(QLocale::English).toString((double)cnt, 'f', 0));
+	title.append(" strangers online");
+	setWindowTitle(title);
 }
+
 void Selector::updateServers(int cnt, QString srv[])
 {
 	if((cnt < 0) || (cnt > 8)) return;
@@ -17,9 +22,10 @@ void Selector::updateServers(int cnt, QString srv[])
 Selector::Selector(QWidget *parent) : QWidget(parent),
 									  X(16), Y(16),
 									  W(128), H(32),
-									  poller(),
-									  servers(new QString[8])
+									  poller()
 {
+	connect(&poller, SIGNAL(count(long)), this, SLOT(updateCount(long)));
+
 	QPushButton *text = new QPushButton("&Text Chat", this);
 	text->setGeometry(X, Y, W, H-2);
 	text->setToolTip("Talk to Strangers!");

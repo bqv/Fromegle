@@ -8,6 +8,7 @@
 #include <iostream>
 #include <QString>
 #include <QThread>
+#include <QLocale>
 #include <QWidget>
 #include <QIcon>
 
@@ -20,7 +21,9 @@ class Selector : public QWidget
 
 	public:
 		Selector(QWidget *parent = 0);
-		void updateCount(int);
+
+	public slots:
+		void updateCount(long);
 		void updateServers(int, QString[]);
 
 	private slots:
@@ -34,7 +37,7 @@ class Selector : public QWidget
 		PollThread poller;
 		QString *servers;
 		int serverct;
-		int count;
+		long count;
 };
 
 #endif
