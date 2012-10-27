@@ -1,6 +1,7 @@
 #include "connection.h"
 
-Connection::Connection(QString url) : params(0)
+Connection::Connection(QString url) : params(0),
+									  loop()
 {
 	data = new kvpair[5];
 	server = url;
@@ -35,7 +36,7 @@ QByteArray Connection::get(QString location)
 	sendReq(false);
 	params = 0;
 	
-	while(!done);
+	loop.exec();
 
 	return response;
 }
@@ -46,7 +47,7 @@ QByteArray Connection::post(QString location)
 	sendReq(true);
 	params = 0;
 
-	while(!done);
+	loop.exec();
 
 	return response;
 }
@@ -54,8 +55,7 @@ QByteArray Connection::post(QString location)
 void Connection::httpDone()
 {
 	response = reply->readAll();
-	done = true;
-	std::cout << response.data() << std::endl;
+	loop.quit();
 }
 
 QByteArray* Connection::compileData()
@@ -80,10 +80,8 @@ void Connection::sendReq(bool post)
 	}
 	else
 	{
-		QUrl url = (new QString(server))->append(loc).append(*payld);
+		QUrl url = QString("http://").append(server).append(loc).append(*payld);
 		reply = qnam.get(QNetworkRequest(url));
 	}
-
 	connect(reply, SIGNAL(finished()), this, SLOT(httpDone()));
-	delete payld;
 }

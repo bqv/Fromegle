@@ -1,23 +1,38 @@
 #include "poll.h"
 
-PollThread::PollThread() : QThread(),
+PollThread::PollThread() : QObject(),
 						   active(true),
-						   conn()
+						   thread()
 {
-	start();
+	connect(&thread, SIGNAL(started()), this, SLOT(work()));
+	this->moveToThread(&thread);
+	thread.start();
 }
 
 PollThread::~PollThread()
 {
-	active = false;
-	wait();
+	;
 }
 
-void PollThread::run()
+void parse(QByteArray json)
 {
+	std::cout << json << "%" << std::endl;
+}
+
+void PollThread::work()
+{
+	conn = new Connection("www.omegle.com");
 	while(active)
 	{
-		usleep(30000);
-		conn->get("/status");
+		QByteArray data = conn->get("/status").data();
+		if(data.isEmpty() || data.endsWith("null")) emit error("Bad response from status");
+		else parse(data);
+		thread.sleep(30);
 	}
+}
+
+void PollThread::stop()
+{
+	active = false;
+	thread.quit();
 }

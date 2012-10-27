@@ -6,7 +6,7 @@ void Selector::updateCount(int cnt)
 }
 void Selector::updateServers(int cnt, QString srv[])
 {
-	if(cnt > 8) return;
+	if((cnt < 0) || (cnt > 8)) return;
 	for(int i=0; i < cnt; i++) //could just use cnt here...
 	{
 		servers[i] = srv[i];
@@ -17,9 +17,9 @@ void Selector::updateServers(int cnt, QString srv[])
 Selector::Selector(QWidget *parent) : QWidget(parent),
 									  X(16), Y(16),
 									  W(128), H(32),
-									  poller()
+									  poller(),
+									  servers(new QString[8])
 {
-	servers = new QString[8];
 	QPushButton *text = new QPushButton("&Text Chat", this);
 	text->setGeometry(X, Y, W, H-2);
 	text->setToolTip("Talk to Strangers!");

@@ -3,8 +3,10 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QEventLoop>
 #include <iostream>
 #include <QObject>
+#include <QThread>
 #include <QString>
 #include <QUrl>
 
@@ -34,10 +36,10 @@ class Connection : public QObject
 		unsigned short params;
 		QNetworkReply *reply;
 		QByteArray response;
+		QEventLoop loop;
 		QString server;
 		kvpair *data;
 		QString loc;
-		bool done;
 
 		void sendReq(bool);
 		QByteArray* compileData();

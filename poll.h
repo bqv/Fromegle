@@ -6,19 +6,35 @@
 
 #include "connection.h"
 
-class PollThread : public QThread
+class T: public QThread {
+	public:
+		static void sleep(int s)
+		{ QThread::sleep(s); }
+		static void msleep(int ms)
+		{ QThread::msleep(ms); }
+		static void usleep(int us)
+		{ QThread::usleep(us); }
+};
+
+class PollThread : public QObject
 {
 	Q_OBJECT
 
 	public:
 		PollThread();
 		~PollThread();
+		void parse();
 	
-	protected:
-		void run();
+	public slots:
+		void work();
+		void stop();
+	
+	signals:
+		void error(QString);
 
 	private:
 		bool active;
+		T thread;
 		Connection *conn;
 };
 
