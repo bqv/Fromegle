@@ -10,6 +10,6 @@ class JSON : public QObject
 	public:
 		JSON();
 		~JSON();
-}
+};
 
 #endif
