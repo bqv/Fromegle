@@ -24,7 +24,7 @@ class Selector : public QWidget
 
 	public slots:
 		void updateCount(long);
-		void updateServers(int, QString[]);
+		void updateServers(QStringList);
 
 	private slots:
 		void initText();
