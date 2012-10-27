@@ -9,14 +9,9 @@ void Selector::updateCount(long cnt)
 	setWindowTitle(title);
 }
 
-void Selector::updateServers(int cnt, QString srv[])
+void Selector::updateServers(QStringList list)
 {
-	if((cnt < 0) || (cnt > 8)) return;
-	for(int i=0; i < cnt; i++) //could just use cnt here...
-	{
-		servers[i] = srv[i];
-	}
-	serverct = cnt;
+	servers.swap(list);
 }
 
 Selector::Selector(QWidget *parent) : QWidget(parent),
@@ -25,6 +20,7 @@ Selector::Selector(QWidget *parent) : QWidget(parent),
 									  poller()
 {
 	connect(&poller, SIGNAL(count(long)), this, SLOT(updateCount(long)));
+	connect(&poller, SIGNAL(servers(QStringList)), this, SLOT(updateServers(QStringList)));
 
 	QPushButton *text = new QPushButton("&Text Chat", this);
 	text->setGeometry(X, Y, W, H-2);

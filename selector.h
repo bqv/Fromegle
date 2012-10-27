@@ -35,8 +35,7 @@ class Selector : public QWidget
 	private:
 		const int X, Y, W, H;
 		PollThread poller;
-		QString *servers;
-		int serverct;
+		QStringList servers;
 		long count;
 };
 
