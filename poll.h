@@ -23,7 +23,6 @@ class PollThread : public QObject
 	public:
 		PollThread();
 		~PollThread();
-		void parse(QByteArray);
 	
 	public slots:
 		void work();
@@ -35,6 +34,7 @@ class PollThread : public QObject
 		void error(QString);
 
 	private:
+		void parse(QByteArray);
 		bool active;
 		T thread;
 		Connection *conn;
