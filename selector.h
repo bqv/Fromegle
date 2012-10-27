@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QStringList>
 #include <iostream>
 #include <QString>
 #include <QThread>

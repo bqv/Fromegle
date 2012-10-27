@@ -1,6 +1,7 @@
 #ifndef _POLL_H_
 #define _POLL_H_
 
+#include <QStringList>
 #include <QString>
 #include <QThread>
 

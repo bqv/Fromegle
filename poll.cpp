@@ -16,7 +16,7 @@ PollThread::~PollThread()
 
 void PollThread::parse(QByteArray json)
 {
-	std::cout << json.data() << "\033[38;3;1;255m%\033[0m" << std::endl;
+	std::cout << "--" << std::endl << json.data() << "\033[38;3;1;255m%\033[0m" << std::endl << "--" << std::endl;
 	json.truncate(json.indexOf(","));
 	emit count(json.right(json.size()-json.lastIndexOf(" ")-1).toLong());
 }
