@@ -6,6 +6,7 @@
 #include <QThread>
 
 #include "connection.h"
+#include "json.h"
 
 class T: public QThread {
 	public:
