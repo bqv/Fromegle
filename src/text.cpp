@@ -14,7 +14,7 @@ void Selector::initTextc()
 	int x = (desktop->width() - WIDTH) / 2;
 	int y = (desktop->height() - HEIGHT) / 2;
 
-	TextWindow *text = new TextWindow();
+	TextWindow *text = new TextWindow(this);
 	text->setFixedSize(WIDTH, HEIGHT);
 	text->move(x, y);
 	text->setWindowTitle("Fromegle - Text Chat");
@@ -22,7 +22,8 @@ void Selector::initTextc()
 	text->show();
 }
 
-TextWindow::TextWindow(QWidget *parent) : QWidget(parent)
+TextWindow::TextWindow(Selector *selector) : QWidget(),
+											 instance(selector)
 {
 	;
 }

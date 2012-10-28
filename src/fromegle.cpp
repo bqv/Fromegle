@@ -9,10 +9,25 @@ void Selector::updateCount(int cnt)
 	setWindowTitle(title);
 }
 
-void Selector::updateQueueTimes(double spyee, double spy)
+void Selector::updateQueueTimes(double spye, double spy)
 {
-	spyeeQueue = spyee;
-	spyQueue = spy;
+	// True lean favours spy
+	if((spy < 2) && (spye < 2)) lean = (rand() % 4) == 0;
+	else if(spy > spye) lean = false;
+	else lean = true;
+
+	textc->setFont(QFont(0, 0, QFont::Bold));
+	if(lean)
+	{
+		spyee->setFont(QFont(0, 0, QFont::Normal));
+		quest->setFont(QFont(0, 0, QFont::Bold));
+	}
+	else
+	{
+		spyee->setFont(QFont(0, 0, QFont::Bold));
+		quest->setFont(QFont(0, 0, QFont::Normal));
+	}
+	video->setFont(QFont(0, 0, QFont::Bold));
 }
 
 void Selector::updateTimestamp(double ts)
@@ -22,15 +37,17 @@ void Selector::updateTimestamp(double ts)
 
 void Selector::updateServers(QStringList list)
 {
-	servers.swap(list);
-	QString server = servers[rand() % servers.size()];
-	std::cout << "Random server: " << server.toStdString() << std::endl;
+	servers = list;
+	textc->setEnabled(true);
+	spyee->setEnabled(true);
+	quest->setEnabled(true);
+	video->setEnabled(false);
 }
 
-Selector::Selector(QWidget *parent) : QWidget(parent),
-									  X(16), Y(16),
-									  W(128), H(32),
-									  poller()
+Selector::Selector() : QWidget(),
+					   X(16), Y(16),
+					   W(128), H(32),
+					   poller()
 {
 	connect(&poller, SIGNAL(count(int)), this, SLOT(updateCount(int)));
 	connect(&poller, SIGNAL(queuetimes(double, double)), this, SLOT(updateQueueTimes(double, double)));
@@ -39,14 +56,17 @@ Selector::Selector(QWidget *parent) : QWidget(parent),
 
 	textc = new QPushButton("&Text Chat", this);
 	textc->setGeometry(X, Y, W, H-2);
+	textc->setEnabled(false);
 	textc->setToolTip("Talk to Strangers!");
 
 	spyee = new QPushButton("&Spy Mode", this);
 	spyee->setGeometry(X, Y+(H), W, H-2);
+	spyee->setEnabled(false);
 	spyee->setToolTip("Answer questions with another stranger!");
 
 	quest = new QPushButton("&Question Mode", this);
 	quest->setGeometry(X, Y+(2*H), W, H-2);
+	quest->setEnabled(false);
 	quest->setToolTip("Watch two strangers discuss your question!");
 
 	video = new QPushButton("&Video Chat", this);
@@ -58,6 +78,11 @@ Selector::Selector(QWidget *parent) : QWidget(parent),
 	connect(spyee, SIGNAL(clicked()), this, SLOT(initSpyee()));
 	connect(quest, SIGNAL(clicked()), this, SLOT(initQuest()));
 	connect(video, SIGNAL(clicked()), this, SLOT(initVideo()));
+}
+
+Selector::~Selector()
+{
+	;
 }
 
 void Selector::initSpyee()
@@ -76,6 +101,16 @@ void Selector::initVideo()
 	e->setText("ERROR");
 	e->setInformativeText("Not Implemented!\n\nAnd how did you even get here?!");
 	e->show();
+}
+
+QString Selector::randomServer()
+{
+	return servers[rand() % servers.size()];
+}
+
+int Selector::getCount()
+{
+	return count;
 }
 
 int main(int argc, char *argv[])
@@ -101,3 +136,4 @@ int main(int argc, char *argv[])
 
 	return app.exec();
 }
+

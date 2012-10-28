@@ -8,14 +8,19 @@
 #include <QWidget>
 #include <QIcon>
 
+#include "selector.h"
+
 class TextWindow : public QWidget
 {
 	Q_OBJECT
 
 	public:
-		TextWindow(QWidget *parent = 0);
+		TextWindow(Selector *selector = 0);
 	
 	private slots:
 		
+	private:
+		Selector *instance;
 };
+
 #endif

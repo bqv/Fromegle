@@ -15,14 +15,16 @@
 #include <QIcon>
 
 #include "poll.h"
-#include "text.h"
 
 class Selector : public QWidget
 {
 	Q_OBJECT
 
 	public:
-		Selector(QWidget *parent = 0);
+		Selector();
+		~Selector();
+		QString randomServer();
+		int getCount();
 
 	public slots:
 		void updateCount(int);
@@ -41,10 +43,11 @@ class Selector : public QWidget
 		PollThread poller;
 		QPushButton *textc, *spyee, *quest, *video;
 		QStringList servers;
-		double spyeeQueue;
-		double spyQueue;
 		double timestamp;
+		bool lean;
 		int count;
 };
+
+#include "text.h"
 
 #endif
