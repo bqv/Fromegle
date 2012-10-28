@@ -1,11 +1,5 @@
-TEMPLATE = app
-TARGET = 
-DEPENDPATH += .
-INCLUDEPATH += .
+TEMPLATE = subdirs
+CONFIG += ordered
+SUBDIRS = qjson src
 
-# Input
-HEADERS += connection.h selector.h text.h poll.h json.h
-SOURCES += connection.cpp fromegle.cpp text.cpp poll.cpp json.cpp
-
-QT += network
-CONFIG += debug
+src.depends = qjson
