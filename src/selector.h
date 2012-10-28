@@ -21,10 +21,11 @@ class Selector : public QWidget
 	Q_OBJECT
 
 	public:
-		Selector();
+		Selector(QApplication *app = 0);
 		~Selector();
 		QString randomServer();
 		int getCount();
+		QApplication* app();
 
 	public slots:
 		void updateCount(int);
@@ -39,6 +40,7 @@ class Selector : public QWidget
 		void initVideo();
 
 	private:
+		QApplication *qapp;
 		const int X, Y, W, H;
 		PollThread poller;
 		QPushButton *textc, *spyee, *quest, *video;

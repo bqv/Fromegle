@@ -1,26 +1,35 @@
 #ifndef _TEXT_H_
 #define _TEXT_H_
 
-#include <QDesktopWidget>
 #include <QApplication>
 #include <QPushButton>
+#include <QSizePolicy>
+#include <QStatusBar>
+#include <QMenuBar>
 #include <iostream>
 #include <QWidget>
-#include <QIcon>
+#include <QLabel>
+#include <QFrame>
 
 #include "selector.h"
+#include "mode.h"
 
-class TextWindow : public QWidget
+class TextWindow : public ModeWindow
 {
 	Q_OBJECT
 
 	public:
 		TextWindow(Selector *selector = 0);
+		~TextWindow();
 	
-	private slots:
-		
 	private:
-		Selector *instance;
+		void onClose();
+		QMenuBar* makeMenus();
+		QStatusBar* makeStatus();
+
+	private:
+		QLabel *leftstatus;
+		QLabel *rightstatus;
 };
 
 #endif

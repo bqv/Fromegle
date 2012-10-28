@@ -1,29 +1,46 @@
-#include "selector.h"
 #include "text.h"
 
-void Selector::initTextc()
+TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 {
-	const int WIDTH = 512;
-	const int HEIGHT = 512;
-
-	std::cout << "Entering Text Mode..." << std::endl;
-	hide();
-
-	QDesktopWidget *desktop = QApplication::desktop();
-
-	int x = (desktop->width() - WIDTH) / 2;
-	int y = (desktop->height() - HEIGHT) / 2;
-
-	TextWindow *text = new TextWindow(this);
-	text->setFixedSize(WIDTH, HEIGHT);
-	text->move(x, y);
-	text->setWindowTitle("Fromegle - Text Chat");
-	text->setWindowIcon(QIcon("icon.png"));
-	text->show();
+	setWindowTitle("Fromegle - Text Chat");
+	makeMenus();
+	makeStatus();
+	show();
 }
 
-TextWindow::TextWindow(Selector *selector) : QWidget(),
-											 instance(selector)
+TextWindow::~TextWindow()
 {
 	;
 }
+
+void TextWindow::onClose()
+{
+	;
+}
+
+QMenuBar* TextWindow::makeMenus()
+{
+	QMenuBar *menu = menuBar();
+	menu->addMenu("&File");
+	menu->addAction("&Exit");
+	menu->addMenu("&Edit");
+	menu->addMenu("&Strangers");
+	menu->addMenu("&Window");
+	menu->addMenu("&Help");
+
+	return menu;
+}
+
+QStatusBar* TextWindow::makeStatus()
+{
+	QStatusBar *status = statusBar();
+	leftstatus = new QLabel("A is loading", status);
+	leftstatus->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	rightstatus = new QLabel("B is loading", status);
+	rightstatus->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+	status->addPermanentWidget(leftstatus);
+	status->addPermanentWidget(rightstatus);
+	
+	return status;
+}
+

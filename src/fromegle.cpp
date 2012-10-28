@@ -44,10 +44,11 @@ void Selector::updateServers(QStringList list)
 	video->setEnabled(false);
 }
 
-Selector::Selector() : QWidget(),
-					   X(16), Y(16),
-					   W(128), H(32),
-					   poller()
+Selector::Selector(QApplication *app) : QWidget(),
+										qapp(app),
+										X(16), Y(16),
+										W(128), H(32),
+										poller()
 {
 	connect(&poller, SIGNAL(count(int)), this, SLOT(updateCount(int)));
 	connect(&poller, SIGNAL(queuetimes(double, double)), this, SLOT(updateQueueTimes(double, double)));
@@ -85,6 +86,13 @@ Selector::~Selector()
 	;
 }
 
+void Selector::initTextc()
+{
+	std::cout << "Entering Text Mode..." << std::endl;
+
+	new TextWindow(this);
+}
+
 void Selector::initSpyee()
 {
 	std::cout << "Entering Spy Mode..." << std::endl;
@@ -113,6 +121,11 @@ int Selector::getCount()
 	return count;
 }
 
+QApplication* Selector::app()
+{
+	return qapp;
+}
+
 int main(int argc, char *argv[])
 {
 	const int WIDTH = 158;
@@ -120,19 +133,20 @@ int main(int argc, char *argv[])
 
 	QApplication app(argc, argv);
 
-	Selector selector;
+	QObject::connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
 
 	QDesktopWidget *desktop = QApplication::desktop();
 
 	int x = (desktop->width() - WIDTH) / 2;
 	int y = (desktop->height() - HEIGHT) / 2;
 
-	selector.setFixedSize(WIDTH, HEIGHT);
-	selector.move(x, y);
-	selector.setWindowTitle("Fromegle");
-	selector.setToolTip("Select a mode");
-	selector.setWindowIcon(QIcon("icon.png"));
-	selector.show();
+	Selector *sel = new Selector(&app);
+	sel->setFixedSize(WIDTH, HEIGHT);
+	sel->move(x, y);
+	sel->setWindowTitle("Loading...");
+	sel->setToolTip("Select a mode");
+	sel->setWindowIcon(QIcon("icon.png"));
+	sel->show();
 
 	return app.exec();
 }
