@@ -11,6 +11,7 @@
 #include <QThread>
 #include <QLocale>
 #include <QWidget>
+#include <cstdlib>
 #include <QIcon>
 
 #include "poll.h"
@@ -24,20 +25,26 @@ class Selector : public QWidget
 		Selector(QWidget *parent = 0);
 
 	public slots:
-		void updateCount(long);
+		void updateCount(int);
+		void updateQueueTimes(double, double);
+		void updateTimestamp(double);
 		void updateServers(QStringList);
 
 	private slots:
-		void initText();
-		void initSpye();
+		void initTextc();
+		void initSpyee();
 		void initQuest();
 		void initVideo();
 
 	private:
 		const int X, Y, W, H;
 		PollThread poller;
+		QPushButton *textc, *spyee, *quest, *video;
 		QStringList servers;
-		long count;
+		double spyeeQueue;
+		double spyQueue;
+		double timestamp;
+		int count;
 };
 
 #endif

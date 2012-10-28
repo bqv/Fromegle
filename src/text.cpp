@@ -1,7 +1,7 @@
 #include "selector.h"
 #include "text.h"
 
-void Selector::initText()
+void Selector::initTextc()
 {
 	const int WIDTH = 512;
 	const int HEIGHT = 512;

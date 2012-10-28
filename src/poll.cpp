@@ -16,10 +16,12 @@ PollThread::~PollThread()
 
 void PollThread::parse(QByteArray json)
 {
-	std::cout << "--" << std::endl << json.data() << "\033[38;3;1;255m%\033[0m" << std::endl << "--" << std::endl;
-	new JSON(json.data());
-	json.truncate(json.indexOf(","));
-	emit count(json.right(json.size()-json.lastIndexOf(" ")-1).toLong());
+	std::cout << json.data() << "\033[38;3;1;255m%\033[0m\n--" << std::endl;
+	QVariantMap dataset = JSON(json.data()).getSerial().toMap();
+	emit count(dataset.value("count").toInt());
+	emit queuetimes(dataset.value("spyeeQueueTime").toDouble(), dataset.value("spyQueueTime").toDouble());
+	emit timestamp(dataset.value("timestamp").toDouble());
+	emit servers(dataset.value("servers").toStringList());
 }
 
 void PollThread::work()

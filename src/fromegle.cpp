@@ -1,6 +1,6 @@
 #include "selector.h"
 
-void Selector::updateCount(long cnt)
+void Selector::updateCount(int cnt)
 {
 	count = cnt;
 	QString title = "Fromegle - ";
@@ -9,9 +9,22 @@ void Selector::updateCount(long cnt)
 	setWindowTitle(title);
 }
 
+void Selector::updateQueueTimes(double spyee, double spy)
+{
+	spyeeQueue = spyee;
+	spyQueue = spy;
+}
+
+void Selector::updateTimestamp(double ts)
+{
+	timestamp = ts;
+}
+
 void Selector::updateServers(QStringList list)
 {
 	servers.swap(list);
+	QString server = servers[rand() % servers.size()];
+	std::cout << "Random server: " << server.toStdString() << std::endl;
 }
 
 Selector::Selector(QWidget *parent) : QWidget(parent),
@@ -19,33 +32,35 @@ Selector::Selector(QWidget *parent) : QWidget(parent),
 									  W(128), H(32),
 									  poller()
 {
-	connect(&poller, SIGNAL(count(long)), this, SLOT(updateCount(long)));
+	connect(&poller, SIGNAL(count(int)), this, SLOT(updateCount(int)));
+	connect(&poller, SIGNAL(queuetimes(double, double)), this, SLOT(updateQueueTimes(double, double)));
+	connect(&poller, SIGNAL(timestamp(double)), this, SLOT(updateTimestamp(double)));
 	connect(&poller, SIGNAL(servers(QStringList)), this, SLOT(updateServers(QStringList)));
 
-	QPushButton *text = new QPushButton("&Text Chat", this);
-	text->setGeometry(X, Y, W, H-2);
-	text->setToolTip("Talk to Strangers!");
+	textc = new QPushButton("&Text Chat", this);
+	textc->setGeometry(X, Y, W, H-2);
+	textc->setToolTip("Talk to Strangers!");
 
-	QPushButton *spye = new QPushButton("&Spy Mode", this);
-	spye->setGeometry(X, Y+(H), W, H-2);
-	spye->setToolTip("Answer questions with another stranger!");
+	spyee = new QPushButton("&Spy Mode", this);
+	spyee->setGeometry(X, Y+(H), W, H-2);
+	spyee->setToolTip("Answer questions with another stranger!");
 
-	QPushButton *quest = new QPushButton("&Question Mode", this);
+	quest = new QPushButton("&Question Mode", this);
 	quest->setGeometry(X, Y+(2*H), W, H-2);
 	quest->setToolTip("Watch two strangers discuss your question!");
 
-	QPushButton *video = new QPushButton("&Video Chat", this);
+	video = new QPushButton("&Video Chat", this);
 	video->setGeometry(X, Y+(3*H), W, H-2);
 	video->setEnabled(false);
-	quest->setToolTip("Video Chat with Strangers!");
+	video->setToolTip("Video Chat with Strangers!");
 
-	connect(text, SIGNAL(clicked()), this, SLOT(initText()));
-	connect(spye, SIGNAL(clicked()), this, SLOT(initSpye()));
+	connect(textc, SIGNAL(clicked()), this, SLOT(initTextc()));
+	connect(spyee, SIGNAL(clicked()), this, SLOT(initSpyee()));
 	connect(quest, SIGNAL(clicked()), this, SLOT(initQuest()));
 	connect(video, SIGNAL(clicked()), this, SLOT(initVideo()));
 }
 
-void Selector::initSpye()
+void Selector::initSpyee()
 {
 	std::cout << "Entering Spy Mode..." << std::endl;
 }

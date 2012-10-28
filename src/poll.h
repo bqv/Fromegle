@@ -2,6 +2,7 @@
 #define _POLL_H_
 
 #include <QStringList>
+#include <QVariant>
 #include <QString>
 #include <QThread>
 
@@ -31,7 +32,9 @@ class PollThread : public QObject
 		void stop();
 	
 	signals:
-		void count(long);
+		void count(int);
+		void queuetimes(double, double);
+		void timestamp(double);
 		void servers(QStringList);
 		void error(QString);
 
