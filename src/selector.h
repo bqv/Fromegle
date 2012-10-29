@@ -33,6 +33,9 @@ class Selector : public QWidget
 		void updateTimestamp(double);
 		void updateServers(QStringList);
 
+	signals:
+		void countChanged();
+
 	private slots:
 		void initTextc();
 		void initSpyee();

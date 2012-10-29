@@ -5,30 +5,85 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	setWindowTitle("Fromegle - Text Chat");
 	makeMenus();
 	makeStatus();
+	body = new QWidget(this);
+	QBoxLayout *main_vlt = new QVBoxLayout();
+	body->setLayout(main_vlt);
+	setCentralWidget(body);
 
-	(left_tab = new QTabWidget)->setTabPosition(QTabWidget::East);
-	left_tab->addTab(new QWidget, "Conversation");
-	(right_tab = new QTabWidget)->setTabPosition(QTabWidget::West);
-	right_tab->addTab(new QWidget, "Conversation");
+	QBoxLayout *display = new QHBoxLayout();
+	QBoxLayout *bottombar = new QHBoxLayout();
+	main_vlt->addLayout(display);
+	main_vlt->addLayout(bottombar);
+
+	QBoxLayout *leftpanel = new QVBoxLayout();
+	QBoxLayout *rightpanel = new QVBoxLayout();
+	display->addLayout(leftpanel);
+	display->addLayout(rightpanel);
 
 	QLabel *left_title = new QLabel("Stranger A");
 	left_title->setFont(QFont(0, 0, QFont::Bold));
-	QVBoxLayout vlt_a, vlt_b;
-	vlt_a.addWidget(left_title);
-	vlt_a.addWidget(left_tab);
+	(left_tab = new QTabWidget)->setTabPosition(QTabWidget::East);
+	QBoxLayout *leftinject = new QHBoxLayout();
+	leftpanel->addWidget(left_title);
+	leftpanel->addWidget(left_tab);
+	leftpanel->addLayout(leftinject);
+
+	QWidget *leftconvo = new QWidget;
+	left_tab->addTab(leftconvo, "Conversation");
+	QBoxLayout *lconvo_vlt = new QVBoxLayout();
+	leftconvo->setLayout(lconvo_vlt);
+
+	lconvo = new QTextBrowser;
+	ltyping = new QLabel("Stranger A is typing...");
+	lconvo_vlt->addWidget(lconvo);
+	lconvo_vlt->addWidget(ltyping);
+
+	lconvo->setHtml("<a href='test://test'><strong>test</strong></a>");
+	lconvo->setFrameShadow(QFrame::Plain);
+	lconvo->viewport()->setAutoFillBackground(false);
+
+	QLineEdit *leftbox = new QLineEdit();
+	QPushButton *leftsend = new QPushButton("Send");
+	leftinject->addWidget(leftbox);
+	leftinject->addWidget(leftsend);
+
 	QLabel *right_title = new QLabel("Stranger B");
 	right_title->setAlignment(Qt::AlignRight);
 	right_title->setFont(QFont(0, 0, QFont::Bold));
-	vlt_b.addWidget(right_title);
-	vlt_b.addWidget(right_tab);
+	(right_tab = new QTabWidget)->setTabPosition(QTabWidget::West);
+	QBoxLayout *rightinject = new QHBoxLayout();
+	rightpanel->addWidget(right_title);
+	rightpanel->addWidget(right_tab);
+	rightpanel->addLayout(rightinject);
 
-	body = new QWidget(this);
-	QHBoxLayout *main_lt = new QHBoxLayout();
-	main_lt->addLayout(&vlt_a);
-	main_lt->addLayout(&vlt_b);
-	body->setLayout(main_lt);
+	QWidget *rightconvo = new QWidget;
+	right_tab->addTab(rightconvo, "Conversation");
+	QBoxLayout *rconvo_vlt = new QVBoxLayout();
+	rightconvo->setLayout(rconvo_vlt);
 
-	setCentralWidget(body);
+	rconvo = new QTextBrowser;
+	rtyping = new QLabel("Stranger B is typing...");
+	rconvo_vlt->addWidget(rconvo);
+	rconvo_vlt->addWidget(rtyping);
+
+	rconvo->setHtml("<span style='color:red'>trololololololol lololololololol lololololololol lololololololol</a>");
+	rconvo->setFrameShadow(QFrame::Plain);
+	rconvo->viewport()->setAutoFillBackground(false);
+
+	QLineEdit *rightbox = new QLineEdit();
+	QPushButton *rightsend = new QPushButton("Send");
+	rightinject->addWidget(rightbox);
+	rightinject->addWidget(rightsend);
+
+	QPushButton *ra, *rb, *re, *de, *db, *da;
+	bottombar->addWidget(ra = new QPushButton("Reconnect A"));
+	bottombar->addWidget(rb = new QPushButton("Reconnect B"));
+	bottombar->addWidget(re = new QPushButton("Reconnect")); //italic
+	bottombar->addWidget(de = new QPushButton("Disconnect"));//italic
+	bottombar->addWidget(db = new QPushButton("Disconnect B"));
+	bottombar->addWidget(da = new QPushButton("Disconnect A"));
+	re->setFont(QFont(0, 0, QFont::Bold));
+	de->setFont(QFont(0, 0, QFont::Bold));
 
 	show();
 }
@@ -199,14 +254,25 @@ QMenuBar* TextWindow::makeMenus()
 QStatusBar* TextWindow::makeStatus()
 {
 	QStatusBar *status = statusBar();
-	leftstatus = new QLabel("A is loading", status);
-	leftstatus->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-	rightstatus = new QLabel("B is loading", status);
-	rightstatus->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-	status->addPermanentWidget(leftstatus);
-	status->addPermanentWidget(rightstatus);
+	int cnt = instance->getCount();
+	QString countstr = "";
+	countstr.append(QLocale(QLocale::English).toString((double)cnt, 'f', 0));
+	countstr.append(" strangers online");
+	count = new QLabel(countstr, status);
+	status->addPermanentWidget(count);
+
+	connect(instance, SIGNAL(countChanged()), this, SLOT(updateStatus()));
 	
 	return status;
+}
+
+void TextWindow::updateStatus()
+{
+	int cnt = instance->getCount();
+	QString countstr = "";
+	countstr.append(QLocale(QLocale::English).toString((double)cnt, 'f', 0));
+	countstr.append(" strangers online");
+	count->setText(countstr);
 }
 
 void TextWindow::textc()

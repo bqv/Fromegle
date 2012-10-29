@@ -3,6 +3,7 @@
 
 #include <QStackedLayout>
 #include <QKeySequence>
+#include <QTextBrowser>
 #include <QApplication>
 #include <QPushButton>
 #include <QSizePolicy>
@@ -10,6 +11,7 @@
 #include <QBoxLayout>
 #include <QStatusBar>
 #include <QGroupBox>
+#include <QLineEdit>
 #include <QMenuBar>
 #include <iostream>
 #include <QWidget>
@@ -41,10 +43,11 @@ class TextWindow : public ModeWindow
 
 	private:
 		QWidget *body;
-		QLabel *leftstatus;
-		QLabel *rightstatus;
+		QLabel *count;
 		QTabWidget *left_tab, *right_tab;
-		QSizePolicy policy;
+		QTextBrowser *lconvo, *rconvo;
+		QLabel *ltyping, *rtyping;
+		QWidgetList lefttabs, righttabs;
 		QAction *m_new, *m_open, *m_save, *m_saveas;
 		QAction *m_close, *m_exit;
 		QAction *m_cut, *m_copy, *m_paste;
@@ -55,6 +58,7 @@ class TextWindow : public ModeWindow
 		QAction *m_manu, *m_about;
 
 	private slots:
+		void updateStatus();
 		void newl(){};
 		void open(){};
 		void save(){};

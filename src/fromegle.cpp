@@ -8,6 +8,7 @@ void Selector::updateCount(int cnt)
 	title.append(" strangers online");
 	setWindowTitle(title);
 	setToolTip("Select a mode...");
+	emit countChanged();
 }
 
 void Selector::updateQueueTimes(double spye, double spy)
@@ -59,6 +60,7 @@ Selector::Selector(QApplication *app) : QWidget(),
 	textc = new QPushButton("&Text Chat", this);
 	textc->setGeometry(X, Y, W, H-2);
 	textc->setEnabled(false);
+	textc->setDefault(true);
 	textc->setToolTip("Talk to Strangers!");
 
 	spyee = new QPushButton("&Spy Mode", this);
