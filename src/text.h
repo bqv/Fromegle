@@ -1,10 +1,13 @@
 #ifndef _TEXT_H_
 #define _TEXT_H_
 
+#include <QStackedLayout>
 #include <QKeySequence>
 #include <QApplication>
 #include <QPushButton>
 #include <QSizePolicy>
+#include <QTabWidget>
+#include <QBoxLayout>
 #include <QStatusBar>
 #include <QGroupBox>
 #include <QMenuBar>
@@ -37,8 +40,11 @@ class TextWindow : public ModeWindow
 		QStatusBar* makeStatus();
 
 	private:
+		QWidget *body;
 		QLabel *leftstatus;
 		QLabel *rightstatus;
+		QTabWidget *left_tab, *right_tab;
+		QSizePolicy policy;
 		QAction *m_new, *m_open, *m_save, *m_saveas;
 		QAction *m_close, *m_exit;
 		QAction *m_cut, *m_copy, *m_paste;

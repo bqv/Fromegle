@@ -6,7 +6,29 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	makeMenus();
 	makeStatus();
 
-	QGroupBox left, right;
+	(left_tab = new QTabWidget)->setTabPosition(QTabWidget::East);
+	left_tab->addTab(new QWidget, "Conversation");
+	(right_tab = new QTabWidget)->setTabPosition(QTabWidget::West);
+	right_tab->addTab(new QWidget, "Conversation");
+
+	QLabel *left_title = new QLabel("Stranger A");
+	left_title->setFont(QFont(0, 0, QFont::Bold));
+	QVBoxLayout vlt_a, vlt_b;
+	vlt_a.addWidget(left_title);
+	vlt_a.addWidget(left_tab);
+	QLabel *right_title = new QLabel("Stranger B");
+	right_title->setAlignment(Qt::AlignRight);
+	right_title->setFont(QFont(0, 0, QFont::Bold));
+	vlt_b.addWidget(right_title);
+	vlt_b.addWidget(right_tab);
+
+	body = new QWidget(this);
+	QHBoxLayout *main_lt = new QHBoxLayout();
+	main_lt->addLayout(&vlt_a);
+	main_lt->addLayout(&vlt_b);
+	body->setLayout(main_lt);
+
+	setCentralWidget(body);
 
 	show();
 }
