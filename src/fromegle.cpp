@@ -7,6 +7,7 @@ void Selector::updateCount(int cnt)
 	title.append(QLocale(QLocale::English).toString((double)cnt, 'f', 0));
 	title.append(" strangers online");
 	setWindowTitle(title);
+	setToolTip("Select a mode...");
 }
 
 void Selector::updateQueueTimes(double spye, double spy)
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
 	sel->setFixedSize(WIDTH, HEIGHT);
 	sel->move(x, y);
 	sel->setWindowTitle("Loading...");
-	sel->setToolTip("Select a mode");
+	sel->setToolTip("Attempting to connect");
 	sel->setWindowIcon(QIcon("icon.png"));
 	sel->show();
 
