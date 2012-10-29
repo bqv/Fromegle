@@ -26,7 +26,6 @@ class TextWindow : public ModeWindow
 	
 	private:
 		void onClose();
-		inline void m_connect(QMenu*, QString*, char*);
 		void fileActions();
 		void editActions();
 		void strnActions();
