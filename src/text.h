@@ -6,6 +6,7 @@
 #include <QPushButton>
 #include <QSizePolicy>
 #include <QStatusBar>
+#include <QGroupBox>
 #include <QMenuBar>
 #include <iostream>
 #include <QWidget>
@@ -29,6 +30,8 @@ class TextWindow : public ModeWindow
 		void fileActions();
 		void editActions();
 		void strnActions();
+		void makeFiltersA();
+		void makeFiltersB();
 		void windActions();
 		void helpActions();
 		QMenuBar* makeMenus();
@@ -40,7 +43,9 @@ class TextWindow : public ModeWindow
 		QAction *m_new, *m_open, *m_save, *m_saveas;
 		QAction *m_close, *m_exit;
 		QAction *m_cut, *m_copy, *m_paste;
-		QAction *m_nsa, *m_asa, *m_nsb, *m_asb;
+		QAction *m_nsa, *m_nsb;
+		QAction	*m_asa, *m_asb;
+		QMenu	*m_fsa, *m_fsb;
 		QAction *m_textc, *m_spyee, *m_quest, *m_video;
 		QAction *m_manu, *m_about;
 
@@ -55,8 +60,10 @@ class TextWindow : public ModeWindow
 		void paste(){};
 		void nsa(){};
 		void asa(){};
+		void a_clear(){}
 		void nsb(){};
 		void asb(){};
+		void b_clear(){}
 		void textc();
 		void spyee();
 		void quest();

@@ -6,7 +6,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	makeMenus();
 	makeStatus();
 
-	
+	QGroupBox left, right;
 
 	show();
 }
@@ -70,6 +70,28 @@ void TextWindow::strnActions()
 	m_asb->setShortcut(QKeySequence("Ctrl+Shift+."));
 	m_asb->setCheckable(true);
 	connect(m_asb, SIGNAL(triggered()), this, SLOT(asb()));
+	makeFiltersA();
+	makeFiltersB();
+}
+void TextWindow::makeFiltersA()
+{
+	m_fsa = new QMenu("&A Filters", this);
+	m_fsa->setTearOffEnabled(true);
+	m_fsa->addSeparator();
+	QAction *f_clear = new QAction("&Clear All", this);
+	f_clear->setStatusTip("Disable all A to B Filters");
+	connect(f_clear, SIGNAL(triggered()), this, SLOT(a_clear()));
+	m_fsa->addAction(f_clear);
+}
+void TextWindow::makeFiltersB()
+{
+	m_fsb = new QMenu("&B Filters", this);
+	m_fsb->setTearOffEnabled(true);
+	m_fsb->addSeparator();
+	QAction *f_clear = new QAction("&Clear All", this);
+	f_clear->setStatusTip("Disable all B to A Filters");
+	connect(f_clear, SIGNAL(triggered()), this, SLOT(b_clear()));
+	m_fsb->addAction(f_clear);
 }
 void TextWindow::windActions()
 {
@@ -105,7 +127,7 @@ void TextWindow::helpActions()
 {
 	m_manu = new QAction("&Manual", this);
 	m_manu->setShortcuts(QKeySequence::HelpContents);
-	connect(m_manu, SIGNAL(triggered()), this, SLOT(tute()));
+	connect(m_manu, SIGNAL(triggered()), this, SLOT(manu()));
 	m_about = new QAction("&About", this);
 	connect(m_about, SIGNAL(triggered()), this, SLOT(about()));
 }
@@ -129,11 +151,14 @@ QMenuBar* TextWindow::makeMenus()
 	m_edit->addAction(m_paste);
 	QMenu *m_strn = menu->addMenu("&Strangers");
 	strnActions();
+	m_strn->setTearOffEnabled(true);
 	m_strn->addAction(m_nsa);
 	m_strn->addAction(m_asa);
+	m_strn->addMenu(m_fsa);
 	m_strn->addSeparator();
 	m_strn->addAction(m_nsb);
 	m_strn->addAction(m_asb);
+	m_strn->addMenu(m_fsb);
 	menu->addSeparator();
 	QMenu *m_wind = menu->addMenu("&Window");
 	windActions();
