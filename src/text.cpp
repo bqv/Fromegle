@@ -6,6 +6,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	makeMenus();
 	makeStatus();
 
+	
 
 	show();
 }
@@ -133,6 +134,7 @@ QMenuBar* TextWindow::makeMenus()
 	m_strn->addSeparator();
 	m_strn->addAction(m_nsb);
 	m_strn->addAction(m_asb);
+	menu->addSeparator();
 	QMenu *m_wind = menu->addMenu("&Window");
 	windActions();
 	m_wind->addAction(m_textc);
