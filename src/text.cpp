@@ -106,10 +106,10 @@ void TextWindow::initStrangers()
 	Stranger *a = new Stranger(Stranger::Text);
 	Stranger *b = new Stranger(Stranger::Text);
 
-	connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA()));
-	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send()));
-	connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB()));
-	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(send()));
+	connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA(QString)));
+	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send(QString)));
+	connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB(QString)));
+	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(send(QString)));
 }
 
 void TextWindow::fileActions()
