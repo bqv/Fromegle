@@ -86,6 +86,8 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	re->setFont(QFont(0, 0, QFont::Bold));
 	de->setFont(QFont(0, 0, QFont::Bold));
 
+	initStrangers();
+
 	show();
 }
 
@@ -97,6 +99,17 @@ TextWindow::~TextWindow()
 void TextWindow::onClose()
 {
 	;
+}
+
+void TextWindow::initStrangers()
+{
+	Stranger *a = new Stranger(Stranger::Text);
+	Stranger *b = new Stranger(Stranger::Text);
+
+	connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA()));
+	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send()));
+	connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB()));
+	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(send()));
 }
 
 void TextWindow::fileActions()
@@ -274,6 +287,16 @@ void TextWindow::updateStatus()
 	countstr.append(QLocale(QLocale::English).toString((double)cnt, 'f', 0));
 	countstr.append(" strangers online");
 	count->setText(countstr);
+}
+
+void TextWindow::gotMessageA(QString message)
+{
+	message.clear();
+}
+
+void TextWindow::gotMessageB(QString message)
+{
+	message.clear();
 }
 
 void TextWindow::textc()

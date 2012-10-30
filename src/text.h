@@ -20,6 +20,7 @@
 
 #include "selector.h"
 #include "mode.h"
+#include "stranger.h"
 
 class TextWindow : public ModeWindow
 {
@@ -31,6 +32,7 @@ class TextWindow : public ModeWindow
 	
 	private:
 		void onClose();
+		void initStrangers();
 		void fileActions();
 		void editActions();
 		void strnActions();
@@ -57,8 +59,14 @@ class TextWindow : public ModeWindow
 		QAction *m_textc, *m_spyee, *m_quest, *m_video;
 		QAction *m_manu, *m_about;
 
+	signals:
+		void sendMessageA(QString);
+		void sendMessageB(QString);
+
 	private slots:
 		void updateStatus();
+		void gotMessageA(QString);
+		void gotMessageB(QString);
 		void newl(){};
 		void open(){};
 		void save(){};
