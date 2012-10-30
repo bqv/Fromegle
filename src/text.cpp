@@ -43,8 +43,10 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	lconvo->viewport()->setAutoFillBackground(false);
 	lconvo->append("<br><i>Append test</i>");
 
-	QLineEdit *leftbox = new QLineEdit();
+	leftbox = new QLineEdit();
 	QPushButton *leftsend = new QPushButton("Send");
+	connect(leftsend, SIGNAL(clicked()), this, SLOT(spoolA()));
+	connect(leftbox, SIGNAL(returnPressed()), this, SLOT(spoolA()));
 	leftinject->addWidget(leftbox);
 	leftinject->addWidget(leftsend);
 
@@ -71,8 +73,10 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	rconvo->setFrameShadow(QFrame::Plain);
 	rconvo->viewport()->setAutoFillBackground(false);
 
-	QLineEdit *rightbox = new QLineEdit();
+	rightbox = new QLineEdit();
 	QPushButton *rightsend = new QPushButton("Send");
+	connect(rightsend, SIGNAL(clicked()), this, SLOT(spoolB()));
+	connect(rightbox, SIGNAL(returnPressed()), this, SLOT(spoolB()));
 	rightinject->addWidget(rightbox);
 	rightinject->addWidget(rightsend);
 
@@ -291,12 +295,30 @@ void TextWindow::updateStatus()
 
 void TextWindow::gotMessageA(QString message)
 {
-	message.clear();
+	lconvo->append("<br>");
+	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
 }
-
 void TextWindow::gotMessageB(QString message)
 {
-	message.clear();
+	rconvo->append("<br>");
+	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
+}
+
+void TextWindow::spoolA()
+{
+	QString message = leftbox->text();
+	leftbox->clear();
+
+	if(!message.isEmpty()) emit sendMessageB(message);
+	gotMessageA(message);
+}
+void TextWindow::spoolB()
+{
+	QString message = rightbox->text();
+	rightbox->clear();
+
+	if(!message.isEmpty()) emit sendMessageA(message);
+	gotMessageB(message);
 }
 
 void TextWindow::textc()

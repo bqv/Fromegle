@@ -50,6 +50,7 @@ class TextWindow : public ModeWindow
 		QTextBrowser *lconvo, *rconvo;
 		QLabel *ltyping, *rtyping;
 		QWidgetList lefttabs, righttabs;
+		QLineEdit *leftbox, *rightbox;
 		QAction *m_new, *m_open, *m_save, *m_saveas;
 		QAction *m_close, *m_exit;
 		QAction *m_cut, *m_copy, *m_paste;
@@ -67,6 +68,8 @@ class TextWindow : public ModeWindow
 		void updateStatus();
 		void gotMessageA(QString);
 		void gotMessageB(QString);
+		void spoolA();
+		void spoolB();
 		void newl(){};
 		void open(){};
 		void save(){};

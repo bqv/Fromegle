@@ -21,6 +21,7 @@ class Stranger : public QObject
 
 	private:
 		const StrangerType type;
+		const Stranger *otherStranger;
 };
 
 #endif
