@@ -44,6 +44,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	lconvo->append("<br><i>Append test</i>");
 
 	leftbox = new QLineEdit();
+	leftbox->setPlaceholderText("Type to here to talk as Stranger A");
 	QPushButton *leftsend = new QPushButton("Send");
 	connect(leftsend, SIGNAL(clicked()), this, SLOT(spoolA()));
 	connect(leftbox, SIGNAL(returnPressed()), this, SLOT(spoolA()));
@@ -74,6 +75,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	rconvo->viewport()->setAutoFillBackground(false);
 
 	rightbox = new QLineEdit();
+	rightbox->setPlaceholderText("Type to here to talk as Stranger B");
 	QPushButton *rightsend = new QPushButton("Send");
 	connect(rightsend, SIGNAL(clicked()), this, SLOT(spoolB()));
 	connect(rightbox, SIGNAL(returnPressed()), this, SLOT(spoolB()));
@@ -107,15 +109,17 @@ void TextWindow::onClose()
 
 void TextWindow::initStrangers()
 {
-	a = new Stranger(Stranger::Text);
-	b = new Stranger(Stranger::Text);
+	a = new Stranger(Stranger::Text, instance->getServers());
+	b = new Stranger(Stranger::Text, instance->getServers());
 
 	a->setOther(b);
 	b->setOther(a);
 
-	connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA(QString)));
+	connect(a, SIGNAL(recieved(QString)), this, SLOT(gotMessageA(QString)));
+	connect(a, SIGNAL(sent(QString)), this, SLOT(sentMessageA(QString)));
 	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(inject(QString)));
-	connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB(QString)));
+	connect(b, SIGNAL(recieved(QString)), this, SLOT(gotMessageB(QString)));
+	connect(b, SIGNAL(sent(QString)), this, SLOT(sentMessageB(QString)));
 	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(inject(QString)));
 }
 
@@ -296,13 +300,21 @@ void TextWindow::updateStatus()
 	count->setText(countstr);
 }
 
-void TextWindow::gotMessageA(QString message)
+void TextWindow::gotMessageA(QString message) // Recieved from A, to send to B
 {
 	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
 }
 void TextWindow::gotMessageB(QString message)
 {
 	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
+}
+void TextWindow::sentMessageA(QString message) // Sent to B, by A
+{
+	rconvo->append("<strong style='color:red'>Stranger: </strong><span>"+message+"</span>");
+}
+void TextWindow::sentMessageB(QString message)
+{
+	lconvo->append("<strong style='color:blue'>Stranger: </strong><span>"+message+"</span>");
 }
 
 void TextWindow::spoolA()

@@ -23,7 +23,7 @@ class Selector : public QWidget
 	public:
 		Selector(QApplication *app = 0);
 		~Selector();
-		QString randomServer();
+		QStringList getServers();
 		int getCount();
 		QApplication* app();
 

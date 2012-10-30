@@ -20,11 +20,11 @@ Connection::~Connection()
 
 Connection* Connection::addParam(QString key, QString value)
 {
-	if(params >= sizeof(*data)/sizeof(kvpair))
-	{
-		std::cout << "FIXME: kvpair data[] too small. Index out of bounds." << std::endl;
-		return NULL;
-	}
+//	if(params >= sizeof(*data)/sizeof(kvpair))
+//	{
+//		std::cout << "FIXME: kvpair data[] too small. Index out of bounds." << std::endl;
+//		return NULL;
+//	}
 	data[params].value = value;
 	data[params++].key = key;
 	return this;
@@ -75,12 +75,15 @@ void Connection::sendReq(bool post)
 	QByteArray *payld = compileData();
 	if(post)
 	{
-		QUrl url = (new QString(server))->append(loc);
-		reply = qnam.post(QNetworkRequest(url), *payld);
+		QUrl url = QString("http://").append(server).append(loc);
+		QNetworkRequest req = QNetworkRequest(url);
+		req.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+		reply = qnam.post(req, *payld);
 	}
 	else
 	{
-		QUrl url = QString("http://").append(server).append(loc).append(*payld);
+		QUrl url = QString("http://").append(server).append(loc)
+			.append("?").append(*payld);
 		reply = qnam.get(QNetworkRequest(url));
 	}
 	connect(reply, SIGNAL(finished()), this, SLOT(httpDone()));

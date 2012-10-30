@@ -69,6 +69,8 @@ class TextWindow : public ModeWindow
 		void updateStatus();
 		void gotMessageA(QString);
 		void gotMessageB(QString);
+		void sentMessageA(QString);
+		void sentMessageB(QString);
 		void spoolA();
 		void spoolB();
 		void newl(){};

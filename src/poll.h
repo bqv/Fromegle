@@ -4,20 +4,10 @@
 #include <QStringList>
 #include <QVariant>
 #include <QString>
-#include <QThread>
 
 #include "connection.h"
 #include "json.h"
-
-class T: public QThread {
-	public:
-		static void sleep(int s)
-		{ QThread::sleep(s); }
-		static void msleep(int ms)
-		{ QThread::msleep(ms); }
-		static void usleep(int us)
-		{ QThread::usleep(us); }
-};
+#include "thread.h"
 
 class PollThread : public QObject
 {

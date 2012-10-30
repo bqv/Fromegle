@@ -29,7 +29,11 @@ void PollThread::work()
 	while(active)
 	{
 		QByteArray data = conn->get("/status").data();
-		if(data.isEmpty() || data.endsWith("null")) emit error("Bad response from status");
+		if(data.isEmpty() || data.endsWith("null"))
+		{
+			emit error("Bad response from status");
+			continue;
+		}
 		else parse(data);
 		thread.sleep(10);
 	}

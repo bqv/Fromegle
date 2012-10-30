@@ -114,9 +114,9 @@ void Selector::initVideo()
 	e->show();
 }
 
-QString Selector::randomServer()
+QStringList Selector::getServers()
 {
-	return servers[rand() % servers.size()];
+	return servers;
 }
 
 int Selector::getCount()
