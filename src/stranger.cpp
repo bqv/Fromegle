@@ -17,6 +17,6 @@ void Stranger::setOther(Stranger *otherStranger)
 
 void Stranger::inject(QString message)
 {
-	;
+	//send to other
 }
 
