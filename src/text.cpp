@@ -83,8 +83,8 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	bottombar->addWidget(de = new QPushButton("Disconnect"));//italic
 	bottombar->addWidget(db = new QPushButton("Disconnect B"));
 	bottombar->addWidget(da = new QPushButton("Disconnect A"));
-	re->setFont(QFont(0, 0, QFont::Bold));
-	de->setFont(QFont(0, 0, QFont::Bold));
+	re->setFont(QFont(0, 0, 0, true));
+	de->setFont(QFont(0, 0, 0, true));
 
 	initStrangers();
 
