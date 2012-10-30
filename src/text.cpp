@@ -38,9 +38,10 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	lconvo_vlt->addWidget(lconvo);
 	lconvo_vlt->addWidget(ltyping);
 
-	lconvo->setHtml("<a href='test://test'><strong>test</strong></a>");
+	lconvo->setHtml("<a href='http://www.google.com'><strong>test</strong></a>");
 	lconvo->setFrameShadow(QFrame::Plain);
 	lconvo->viewport()->setAutoFillBackground(false);
+	lconvo->append("<br><i>Append test</i>");
 
 	QLineEdit *leftbox = new QLineEdit();
 	QPushButton *leftsend = new QPushButton("Send");
