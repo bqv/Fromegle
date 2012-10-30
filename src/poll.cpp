@@ -16,7 +16,6 @@ PollThread::~PollThread()
 
 void PollThread::parse(QByteArray json)
 {
-	std::cout << json.data() << "\033[38;3;1;255m%\033[0m\n--" << std::endl;
 	QVariantMap dataset = JSON(json.data()).getSerial().toMap();
 	emit count(dataset.value("count").toInt());
 	emit queuetimes(dataset.value("spyeeQueueTime").toDouble(), dataset.value("spyQueueTime").toDouble());
