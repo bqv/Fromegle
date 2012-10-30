@@ -59,6 +59,7 @@ class TextWindow : public ModeWindow
 		QMenu	*m_fsa, *m_fsb;
 		QAction *m_textc, *m_spyee, *m_quest, *m_video;
 		QAction *m_manu, *m_about;
+		Stranger *a, *b;
 
 	signals:
 		void sendMessageA(QString);

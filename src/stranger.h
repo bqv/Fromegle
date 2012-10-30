@@ -12,6 +12,7 @@ class Stranger : public QObject
 		enum StrangerType { Text, Spy, Question, Video };
 		Stranger(StrangerType t = Text);
 		~Stranger();
+		void setOther(Stranger*);
 
 	signals:
 		void message(QString);
@@ -21,7 +22,7 @@ class Stranger : public QObject
 
 	private:
 		const StrangerType type;
-		const Stranger *otherStranger;
+		const Stranger *other;
 };
 
 #endif

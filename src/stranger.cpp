@@ -7,6 +7,12 @@ Stranger::Stranger(StrangerType t) : type(t)
 
 Stranger::~Stranger()
 {
+	;
+}
+
+void Stranger::setOther(Stranger *otherStranger)
+{
+	other = otherStranger;
 }
 
 void Stranger::send(QString message)

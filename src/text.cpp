@@ -107,8 +107,11 @@ void TextWindow::onClose()
 
 void TextWindow::initStrangers()
 {
-	Stranger *a = new Stranger(Stranger::Text);
-	Stranger *b = new Stranger(Stranger::Text);
+	a = new Stranger(Stranger::Text);
+	b = new Stranger(Stranger::Text);
+
+	a->setOther(b);
+	b->setOther(a);
 
 	connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA(QString)));
 	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send(QString)));
