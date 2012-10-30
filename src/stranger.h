@@ -11,13 +11,13 @@ class Stranger : public QObject
 	public:
 		enum StrangerType { Text, Spy, Question, Video };
 		Stranger(StrangerType t = Text);
-		~Stranger(){};
+		~Stranger();
 
 	signals:
 		void message(QString);
 
 	public slots:
-		void send(QString){};
+		void send(QString);
 
 	private:
 		const StrangerType type;
