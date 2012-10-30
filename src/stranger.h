@@ -18,7 +18,7 @@ class Stranger : public QObject
 		void message(QString);
 
 	public slots:
-		void send(QString);
+		void inject(QString);
 
 	private:
 		const StrangerType type;

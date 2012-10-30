@@ -114,9 +114,9 @@ void TextWindow::initStrangers()
 	b->setOther(a);
 
 	connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA(QString)));
-	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send(QString)));
+	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(inject(QString)));
 	connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB(QString)));
-	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(send(QString)));
+	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(inject(QString)));
 }
 
 void TextWindow::fileActions()
@@ -298,12 +298,10 @@ void TextWindow::updateStatus()
 
 void TextWindow::gotMessageA(QString message)
 {
-	lconvo->append("<br>");
 	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
 }
 void TextWindow::gotMessageB(QString message)
 {
-	rconvo->append("<br>");
 	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
 }
 
