@@ -3,10 +3,10 @@
 
 #include <QStringList>
 #include <QVariant>
-#include <iostream>
 #include <QObject>
 #include <QString>
 #include <cstdlib>
+#include <QDebug>
 #include <QList>
 
 #include "connection.h"
@@ -22,26 +22,31 @@ class Stranger : public QObject
 		Stranger(StrangerType = Text, QStringList = QStringList());
 		~Stranger();
 		void setOther(Stranger*);
+		QString getID();
 
 	signals:
 		void recieved(QString);
 		void sent(QString);
+		void disconnected();
+		void connected();
 
 	public slots:
-		void inject(QString);
+		void send(QString);
+		void disconnect();
+		void reconnect();
 
 	private slots:
 		void run();
 
 	private:
 		void parse(QStringList);
-		void send(QString);
 		QString randomServer();
 
 	private:
 		const StrangerType type;
-		const Stranger *other;
+		Stranger *other;
 		QStringList servers;
+		QString current;
 		QString id;
 		bool active;
 		T thread;

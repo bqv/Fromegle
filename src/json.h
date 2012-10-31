@@ -15,7 +15,7 @@ class JSON : public QObject
 	public:
 		JSON(char jsondata[] = "");
 		JSON(QByteArray = "");
-		JSON(QVariant = new QVariantMap);
+		JSON(QVariant = new QVariant);
 		~JSON();
 
 	public:

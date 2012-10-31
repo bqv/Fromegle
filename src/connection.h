@@ -4,10 +4,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QEventLoop>
-#include <iostream>
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QDebug>
 #include <QUrl>
 
 struct kvpair {

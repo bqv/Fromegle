@@ -20,11 +20,6 @@ Connection::~Connection()
 
 Connection* Connection::addParam(QString key, QString value)
 {
-//	if(params >= sizeof(*data)/sizeof(kvpair))
-//	{
-//		std::cout << "FIXME: kvpair data[] too small. Index out of bounds." << std::endl;
-//		return NULL;
-//	}
 	data[params].value = value;
 	data[params++].key = key;
 	return this;
@@ -63,6 +58,7 @@ QByteArray* Connection::compileData()
 	QByteArray *payld = new QByteArray();
 	for(int i=0; i < params; i++)
 	{
+		if(i != 0) payld->append("&");
 		payld->append(data[i].key);
 		payld->append("=");
 		payld->append(data[i].value);

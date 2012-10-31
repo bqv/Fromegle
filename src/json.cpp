@@ -4,14 +4,14 @@ JSON::JSON(char jsondata[]) : QObject(),
 							  json(jsondata)
 {
 	QJson::Parser parser;
-	serial = parser.parse (json, &success).toMap();
+	serial = parser.parse (json, &success);
 }
 
 JSON::JSON(QByteArray jsondata) : QObject(),
 								  json(jsondata)
 {
 	QJson::Parser parser;
-	serial = parser.parse (json, &success).toMap();
+	serial = parser.parse (json, &success);
 }
 
 JSON::JSON(QVariant serialdata) : QObject(),

@@ -92,6 +92,13 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	re->setFont(QFont(0, 0, 0, true));
 	de->setFont(QFont(0, 0, 0, true));
 
+	connect(ra, SIGNAL(clicked()), this, SLOT(sendConnectA()));
+	connect(rb, SIGNAL(clicked()), this, SLOT(sendConnectB()));
+	connect(re, SIGNAL(clicked()), this, SLOT(sendConnectE()));
+	connect(de, SIGNAL(clicked()), this, SLOT(sendDisconnectE()));
+	connect(db, SIGNAL(clicked()), this, SLOT(sendDisconnectB()));
+	connect(da, SIGNAL(clicked()), this, SLOT(sendDisconnectA()));
+
 	initStrangers();
 
 	show();
@@ -117,10 +124,20 @@ void TextWindow::initStrangers()
 
 	connect(a, SIGNAL(recieved(QString)), this, SLOT(gotMessageA(QString)));
 	connect(a, SIGNAL(sent(QString)), this, SLOT(sentMessageA(QString)));
-	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(inject(QString)));
+	connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send(QString)));
 	connect(b, SIGNAL(recieved(QString)), this, SLOT(gotMessageB(QString)));
 	connect(b, SIGNAL(sent(QString)), this, SLOT(sentMessageB(QString)));
-	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(inject(QString)));
+	connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(send(QString)));
+
+	connect(a, SIGNAL(disconnected()), this, SLOT(gotDisconnectA()));
+	connect(a, SIGNAL(connected()), this, SLOT(gotConnectA()));
+	connect(b, SIGNAL(disconnected()), this, SLOT(gotDisconnectB()));
+	connect(b, SIGNAL(connected()), this, SLOT(gotConnectB()));
+
+	connect(this, SIGNAL(disconnectA()), a, SLOT(disconnect()));
+	connect(this, SIGNAL(reconnectA()), a, SLOT(reconnect()));
+	connect(this, SIGNAL(disconnectB()), b, SLOT(disconnect()));
+	connect(this, SIGNAL(reconnectB()), b, SLOT(reconnect()));
 }
 
 void TextWindow::fileActions()
@@ -303,18 +320,66 @@ void TextWindow::updateStatus()
 void TextWindow::gotMessageA(QString message) // Recieved from A, to send to B
 {
 	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
+	emit sendMessageB(message);
 }
 void TextWindow::gotMessageB(QString message)
 {
 	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
+	emit sendMessageA(message);
 }
-void TextWindow::sentMessageA(QString message) // Sent to B, by A
+void TextWindow::sentMessageA(QString message) // Sent to A, by B
 {
-	rconvo->append("<strong style='color:red'>Stranger: </strong><span>"+message+"</span>");
+	lconvo->append("<strong style='color:blue'>Stranger: </strong><span>"+message+"</span>");
 }
 void TextWindow::sentMessageB(QString message)
 {
-	lconvo->append("<strong style='color:blue'>Stranger: </strong><span>"+message+"</span>");
+	rconvo->append("<strong style='color:red'>Stranger: </strong><span>"+message+"</span>");
+}
+void TextWindow::gotConnectA()
+{
+	lconvo->append("<strong>---<br>You're now chatting with a random stranger. Say hi!</strong>");
+}
+void TextWindow::gotConnectB()
+{
+	rconvo->append("<strong>---<br>You're now chatting with a random stranger. Say hi!</strong>");
+}
+void TextWindow::gotDisconnectA()
+{
+	lconvo->append("<strong>---<br>This stranger has disconnected.</strong>");
+}
+void TextWindow::gotDisconnectB()
+{
+	rconvo->append("<strong>---<br>This stranger has disconnected.</strong>");
+}
+void TextWindow::sendDisconnectA()
+{
+	emit disconnectA();
+	lconvo->append("<strong>---<br>This stranger has been disconnected.</strong>");
+}
+void TextWindow::sendDisconnectB()
+{
+	emit disconnectB();
+	rconvo->append("<strong>---<br>This stranger has been disconnected.</strong>");
+}
+void TextWindow::sendDisconnectE()
+{
+	sendDisconnectA();
+	sendDisconnectB();
+}
+void TextWindow::sendConnectA()
+{
+	sendDisconnectA();
+	emit reconnectA();
+}
+void TextWindow::sendConnectB()
+{
+	sendDisconnectB();
+	emit reconnectB();
+}
+void TextWindow::sendConnectE()
+{
+	sendConnectA();
+	sendConnectB();
 }
 
 void TextWindow::spoolA()
@@ -322,16 +387,14 @@ void TextWindow::spoolA()
 	QString message = leftbox->text();
 	leftbox->clear();
 
-	if(!message.isEmpty()) emit sendMessageB(message);
-	gotMessageA(message);
+	if(!message.isEmpty()) gotMessageA(message);
 }
 void TextWindow::spoolB()
 {
 	QString message = rightbox->text();
 	rightbox->clear();
 
-	if(!message.isEmpty()) emit sendMessageA(message);
-	gotMessageB(message);
+	if(!message.isEmpty()) gotMessageB(message);
 }
 
 void TextWindow::textc()

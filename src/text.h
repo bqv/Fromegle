@@ -13,10 +13,10 @@
 #include <QGroupBox>
 #include <QLineEdit>
 #include <QMenuBar>
-#include <iostream>
 #include <QWidget>
-#include <QLabel>
+#include <QDebug>
 #include <QFrame>
+#include <QLabel>
 
 #include "selector.h"
 #include "mode.h"
@@ -64,6 +64,10 @@ class TextWindow : public ModeWindow
 	signals:
 		void sendMessageA(QString);
 		void sendMessageB(QString);
+		void disconnectA();
+		void disconnectB();
+		void reconnectA();
+		void reconnectB();
 
 	private slots:
 		void updateStatus();
@@ -71,6 +75,16 @@ class TextWindow : public ModeWindow
 		void gotMessageB(QString);
 		void sentMessageA(QString);
 		void sentMessageB(QString);
+		void gotDisconnectA();
+		void gotDisconnectB();
+		void gotConnectA();
+		void gotConnectB();
+		void sendDisconnectA();
+		void sendDisconnectB();
+		void sendDisconnectE();
+		void sendConnectA();
+		void sendConnectB();
+		void sendConnectE();
 		void spoolA();
 		void spoolB();
 		void newl(){};
