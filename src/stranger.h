@@ -21,7 +21,6 @@ class Stranger : public QObject
 		enum StrangerType { Text, Spy, Question, Video };
 		Stranger(StrangerType = Text, QStringList = QStringList());
 		~Stranger();
-		void setOther(Stranger*);
 		QString getID();
 
 	signals:
@@ -29,11 +28,14 @@ class Stranger : public QObject
 		void sent(QString);
 		void disconnected();
 		void connected();
+		void typing();
+		void stopped();
 
 	public slots:
 		void send(QString);
 		void disconnect();
-		void reconnect();
+		void typestart();
+		void typestop();
 
 	private slots:
 		void run();
@@ -44,7 +46,6 @@ class Stranger : public QObject
 
 	private:
 		const StrangerType type;
-		Stranger *other;
 		QStringList servers;
 		QString current;
 		QString id;

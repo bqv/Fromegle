@@ -32,7 +32,7 @@ class TextWindow : public ModeWindow
 	
 	private:
 		void onClose();
-		void initStrangers();
+		void initStrangers(bool);
 		void fileActions();
 		void editActions();
 		void strnActions();
@@ -66,8 +66,10 @@ class TextWindow : public ModeWindow
 		void sendMessageB(QString);
 		void disconnectA();
 		void disconnectB();
-		void reconnectA();
-		void reconnectB();
+		void typestartA();
+		void typestartB();
+		void typestopA();
+		void typestopB();
 
 	private slots:
 		void updateStatus();
@@ -85,6 +87,10 @@ class TextWindow : public ModeWindow
 		void sendConnectA();
 		void sendConnectB();
 		void sendConnectE();
+		void gotTypingA();
+		void gotTypingB();
+		void gotStoppedA();
+		void gotStoppedB();
 		void spoolA();
 		void spoolB();
 		void newl(){};

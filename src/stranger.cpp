@@ -11,12 +11,7 @@ Stranger::Stranger(StrangerType t, QStringList l) : type(t),
 
 Stranger::~Stranger()
 {
-	;
-}
-
-void Stranger::setOther(Stranger *otherStranger)
-{
-	other = otherStranger;
+	thread.quit();
 }
 
 QString Stranger::getID()
@@ -43,10 +38,20 @@ void Stranger::disconnect()
 	active = false;
 }
 
-void Stranger::reconnect()
+void Stranger::typestart()
 {
-	thread.wait();
-	thread.start();
+	Connection *tconn = new Connection(current);
+	tconn->addParam("id", id);
+	QString response = tconn->post("/typing").data();
+	active = false;
+}
+
+void Stranger::typestop()
+{
+	Connection *tconn = new Connection(current);
+	tconn->addParam("id", id);
+	QString response = tconn->post("/stoppedtyping").data();
+	active = false;
 }
 
 void Stranger::run()
@@ -76,7 +81,6 @@ void Stranger::run()
 		}
 		thread.msleep(100);
 	}
-	thread.quit();
 }
 
 void Stranger::parse(QStringList event)
@@ -87,14 +91,22 @@ void Stranger::parse(QStringList event)
 		QString data = event[1];
 		emit recieved(data);
 	}
-	else if(type == "strangerDisconnected")
+	else if(type == "typing")
 	{
-		emit disconnected();
-		active = false;
+		emit typing();
+	}
+	else if(type == "stoppedTyping")
+	{
+		emit stopped();
 	}
 	else if(type == "connected")
 	{
 		emit connected();
+	}
+	else if(type == "strangerDisconnected")
+	{
+		emit disconnected();
+		active = false;
 	}
 }
 
