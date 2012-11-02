@@ -1,113 +1,85 @@
 #include "stranger.h"
 
 Stranger::Stranger(StrangerType t, QStringList l) : type(t),
-													servers(l),
-													thread()
+													servers(l)
 {
-	connect(&thread, SIGNAL(started()), this, SLOT(run()));
-	this->moveToThread(&thread);
-	thread.start();
+	active = false;
 }
 
 Stranger::~Stranger()
 {
-	thread.quit();
+	;
 }
 
-QString Stranger::getID()
+void Stranger::begin()
 {
-	return id;
+	current = randomServer();
+	socket = new QTcpSocket;
+	socket->connectToHost(current, 1365);
+	while(!socket->waitForConnected(1000))
+	{
+		qDebug() << socket->error();
+		socket->connectToHost(current, 1365);
+	}
+	writePacket("omegleStart");
+	active = true;
+	start();
 }
 
 void Stranger::send(QString message)
 {
-	Connection *tconn = new Connection(current);
-	QString msg = QUrl::toPercentEncoding(message);
-	tconn->addParam("id", id);
-	tconn->addParam("msg", msg);
-	QString response = tconn->post("/send").data();
-	if(response == "win")
-		emit sent(message);
+	QMutexLocker locker(&mutex);
+	writePacket("s", message);
 }
 
 void Stranger::disconnect()
 {
-	Connection *tconn = new Connection(current);
-	tconn->addParam("id", id);
-	QString response = tconn->post("/disconnect").data();
+	writePacket("d");
 	active = false;
 }
 
-void Stranger::typestart()
+void Stranger::type()
 {
-	Connection *tconn = new Connection(current);
-	tconn->addParam("id", id);
-	QString response = tconn->post("/typing").data();
-	active = false;
+	writePacket("t");
 }
 
-void Stranger::typestop()
+void Stranger::stop()
 {
-	Connection *tconn = new Connection(current);
-	tconn->addParam("id", id);
-	QString response = tconn->post("/stoppedtyping").data();
-	active = false;
+	writePacket("st");
 }
 
 void Stranger::run()
 {
-	current = randomServer();
-	conn = new Connection(current);
-	QByteArray data = conn->get("/start").data();
-	while(data.isEmpty() || data.endsWith("null"))
-	{
-		QByteArray data = conn->get("/start").data();
-	}
-	id = JSON(data.data()).getSerial().toString();
+	QString data, opcode;
 	while(active)
 	{
-		conn->addParam("id", id);
-		data = conn->post("/events").data();
-		if(data.isEmpty() || data.endsWith("null"))
-			continue;
-		qDebug() << data;
-		QVariantList events = JSON(data.data()).getSerial().toList();
-		QVariantList::Iterator it = events.begin();
-		while(it != events.end())
-		{
-			QStringList event = it->toStringList();
-			parse(event);
-			++it;
-		}
-		thread.msleep(100);
+		opcode = readString(socket->read(1).toUShort());
+		if(opcode == "c") emit connected();
+		else if(opcode == "w"); //emit waiting()?
+		else if(opcode == "m") emit message(readString(socket->read(2).toUShort()));
+		else if(opcode == "t") emit typing();
+		else if(opcode == "st") emit stopped();
+		else if(opcode == "d") break;
+		else qDebug() << "Undefined opcode: " << opcode;
+	}
+	emit disconnected();
+	socket->disconnectFromHost();
+}
+
+void Stranger::writePacket(QString opcode, QString data)
+{
+	socket->write((quint8)opcode.size());
+	socket->write(opcode);
+	if(!data.isNull())
+	{
+		socket->write((quint16)data.size());
+		socket->write(data);
 	}
 }
 
-void Stranger::parse(QStringList event)
+QString Stranger::readString(qint64 length)
 {
-	QString type = event[0];
-	if(type == "gotMessage")
-	{
-		QString data = event[1];
-		emit recieved(data);
-	}
-	else if(type == "typing")
-	{
-		emit typing();
-	}
-	else if(type == "stoppedTyping")
-	{
-		emit stopped();
-	}
-	else if(type == "connected")
-	{
-		emit connected();
-	}
-	else if(type == "strangerDisconnected")
-	{
-		emit disconnected();
-		active = false;
-	}
+	return socket->read(length).data();
 }
 
 QString Stranger::randomServer()
