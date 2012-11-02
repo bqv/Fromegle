@@ -2,8 +2,10 @@
 #define _STRANGER_H_
 
 #include <QMutexLocker>
+#include <QDataStream>
 #include <QStringList>
 #include <QTcpSocket>
+#include <QByteArray>
 #include <QVariant>
 #include <QObject>
 #include <QString>
@@ -33,6 +35,7 @@ class Stranger : public QThread
 
 	signals:
 		void connected();
+		void waiting();
 		void message(QString);
 		void disconnected();
 		void typing();
@@ -41,12 +44,12 @@ class Stranger : public QThread
 	private:
 		void run();
 		void writePacket(QString, QString = QString());
-		QString readString(qint64);
+		QString readString(short);
 		QString randomServer();
 
 	private:
 		mutable QMutex mutex;
-		const StrangerType type;
+		const StrangerType s_type;
 		QStringList servers;
 		QString current;
 		QTcpSocket *socket;

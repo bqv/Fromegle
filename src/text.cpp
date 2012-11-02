@@ -38,6 +38,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	lconvo_vlt->addWidget(lconvo);
 	lconvo_vlt->addWidget(ltyping);
 	ltyping->hide();
+	lscroll = lconvo->verticalScrollBar();
 
 	lconvo->setHtml("");
 	lconvo->setFrameShadow(QFrame::Plain);
@@ -70,6 +71,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	rconvo_vlt->addWidget(rconvo);
 	rconvo_vlt->addWidget(rtyping);
 	rtyping->hide();
+	rscroll = rconvo->verticalScrollBar();
 
 	rconvo->setHtml("");
 	rconvo->setFrameShadow(QFrame::Plain);
@@ -125,6 +127,7 @@ void TextWindow::initStrangers()
 		connect(a, SIGNAL(typing()), this, SLOT(gotTypingA()));
 		connect(a, SIGNAL(stopped()), this, SLOT(gotStoppedA()));
 	}
+	a->begin();
 	b = new Stranger(Stranger::Text, instance->getServers());
 	{
 		connect(b, SIGNAL(connected()), this, SLOT(gotConnectB()));
@@ -133,6 +136,7 @@ void TextWindow::initStrangers()
 		connect(b, SIGNAL(typing()), this, SLOT(gotTypingB()));
 		connect(b, SIGNAL(stopped()), this, SLOT(gotStoppedB()));
 	}
+	b->begin();
 }
 
 void TextWindow::fileActions()
@@ -303,6 +307,19 @@ QStatusBar* TextWindow::makeStatus()
 	return status;
 }
 
+void TextWindow::lwrite(QString text)
+{
+	bool ascroll = (lscroll->value() == lscroll->maximum());
+	lconvo->append(text);
+	if(ascroll) lscroll->setValue(lscroll->maximum());
+}
+void TextWindow::rwrite(QString text)
+{
+	bool ascroll = (rscroll->value() == rscroll->maximum());
+	rconvo->append(text);
+	if(ascroll) rscroll->setValue(rscroll->maximum());
+}
+
 void TextWindow::updateStatus()
 {
 	int cnt = instance->getCount();
@@ -344,31 +361,33 @@ void TextWindow::sendConnectE()
 
 void TextWindow::gotConnectA()
 {
-	lconvo->append("<strong>You're now chatting with a random stranger. Say hi!</strong>");
+	lwrite("<strong>You're now chatting with a random stranger. Say hi!</strong>");
 }
 void TextWindow::gotConnectB()
 {
-	rconvo->append("<strong>You're now chatting with a random stranger. Say hi!</strong>");
+	rwrite("<strong>You're now chatting with a random stranger. Say hi!</strong>");
 }
 void TextWindow::gotMessageA(QString message) // Recieved from A, to send to B
 {
-	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
+	lwrite("<strong style='color:red'>You: </strong><span>"+message+"</span>");
 	b->send(message);
+	rwrite("<strong style='color:red'>Stranger: </strong><span>"+message+"</span>");
 	ltyping->hide();
 }
 void TextWindow::gotMessageB(QString message)
 {
-	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
+	rwrite("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
 	a->send(message);
+	lwrite("<strong style='color:blue'>Stranger: </strong><span>"+message+"</span>");
 	rtyping->hide();
 }
 void TextWindow::gotDisconnectA()
 {
-	lconvo->append("<strong>This stranger has disconnected.</strong>");
+	lwrite("<strong>This stranger has disconnected.</strong>");
 }
 void TextWindow::gotDisconnectB()
 {
-	rconvo->append("<strong>This stranger has disconnected.</strong>");
+	rwrite("<strong>This stranger has disconnected.</strong>");
 }
 void TextWindow::gotTypingA()
 {

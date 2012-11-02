@@ -10,6 +10,7 @@
 #include <QTabWidget>
 #include <QBoxLayout>
 #include <QStatusBar>
+#include <QScrollBar>
 #include <QGroupBox>
 #include <QLineEdit>
 #include <QMenuBar>
@@ -32,7 +33,7 @@ class TextWindow : public ModeWindow
 	
 	private:
 		void onClose();
-		void initStrangers(bool);
+		void initStrangers();
 		void fileActions();
 		void editActions();
 		void strnActions();
@@ -42,12 +43,15 @@ class TextWindow : public ModeWindow
 		void helpActions();
 		QMenuBar* makeMenus();
 		QStatusBar* makeStatus();
+		void lwrite(QString);
+		void rwrite(QString);
 
 	private:
 		QWidget *body;
 		QLabel *count;
 		QTabWidget *left_tab, *right_tab;
 		QTextBrowser *lconvo, *rconvo;
+		QScrollBar *lscroll, *rscroll;
 		QLabel *ltyping, *rtyping;
 		QWidgetList lefttabs, righttabs;
 		QLineEdit *leftbox, *rightbox;
