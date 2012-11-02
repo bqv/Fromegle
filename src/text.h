@@ -62,31 +62,21 @@ class TextWindow : public ModeWindow
 		Stranger *a, *b;
 
 	signals:
-		void sendMessageA(QString);
-		void sendMessageB(QString);
-		void disconnectA();
-		void disconnectB();
-		void typestartA();
-		void typestartB();
-		void typestopA();
-		void typestopB();
 
 	private slots:
 		void updateStatus();
-		void gotMessageA(QString);
-		void gotMessageB(QString);
-		void sentMessageA(QString);
-		void sentMessageB(QString);
-		void gotDisconnectA();
-		void gotDisconnectB();
-		void gotConnectA();
-		void gotConnectB();
 		void sendDisconnectA();
 		void sendDisconnectB();
 		void sendDisconnectE();
 		void sendConnectA();
 		void sendConnectB();
 		void sendConnectE();
+		void gotConnectA();
+		void gotConnectB();
+		void gotMessageA(QString);
+		void gotMessageB(QString);
+		void gotDisconnectA();
+		void gotDisconnectB();
 		void gotTypingA();
 		void gotTypingB();
 		void gotStoppedA();

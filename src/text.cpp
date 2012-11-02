@@ -100,11 +100,7 @@ TextWindow::TextWindow(Selector *selector) : ModeWindow(selector, 768, 512)
 	connect(db, SIGNAL(clicked()), this, SLOT(sendDisconnectB()));
 	connect(da, SIGNAL(clicked()), this, SLOT(sendDisconnectA()));
 
-	a = new Stranger(Stranger::Text, instance->getServers());
-	b = new Stranger(Stranger::Text, instance->getServers());
-
-	initStrangers(true);
-	initStrangers(false);
+	initStrangers();
 
 	show();
 }
@@ -119,33 +115,23 @@ void TextWindow::onClose()
 	;
 }
 
-void TextWindow::initStrangers(bool A)
+void TextWindow::initStrangers()
 {
-	if(A)
+	a = new Stranger(Stranger::Text, instance->getServers());
 	{
-		connect(a, SIGNAL(recieved(QString)), this, SLOT(gotMessageA(QString)));
-		connect(a, SIGNAL(sent(QString)), this, SLOT(sentMessageA(QString)));
-		connect(this, SIGNAL(sendMessageA(QString)), a, SLOT(send(QString)));
-		connect(a, SIGNAL(disconnected()), this, SLOT(gotDisconnectA()));
 		connect(a, SIGNAL(connected()), this, SLOT(gotConnectA()));
-		connect(this, SIGNAL(disconnectA()), a, SLOT(disconnect()));
+		connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA(QString)));
+		connect(a, SIGNAL(disconnected()), this, SLOT(gotDisconnectA()));
 		connect(a, SIGNAL(typing()), this, SLOT(gotTypingA()));
 		connect(a, SIGNAL(stopped()), this, SLOT(gotStoppedA()));
-		connect(this, SIGNAL(typestartA()), a, SLOT(typestart()));
-		connect(this, SIGNAL(typestopA()), a, SLOT(typestop()));
 	}
-	else
+	b = new Stranger(Stranger::Text, instance->getServers());
 	{
-		connect(b, SIGNAL(recieved(QString)), this, SLOT(gotMessageB(QString)));
-		connect(b, SIGNAL(sent(QString)), this, SLOT(sentMessageB(QString)));
-		connect(this, SIGNAL(sendMessageB(QString)), b, SLOT(send(QString)));
-		connect(b, SIGNAL(disconnected()), this, SLOT(gotDisconnectB()));
 		connect(b, SIGNAL(connected()), this, SLOT(gotConnectB()));
-		connect(this, SIGNAL(disconnectB()), b, SLOT(disconnect()));
+		connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB(QString)));
+		connect(b, SIGNAL(disconnected()), this, SLOT(gotDisconnectB()));
 		connect(b, SIGNAL(typing()), this, SLOT(gotTypingB()));
 		connect(b, SIGNAL(stopped()), this, SLOT(gotStoppedB()));
-		connect(this, SIGNAL(typestartB()), b, SLOT(typestart()));
-		connect(this, SIGNAL(typestopB()), b, SLOT(typestop()));
 	}
 }
 
@@ -326,51 +312,13 @@ void TextWindow::updateStatus()
 	count->setText(countstr);
 }
 
-void TextWindow::gotMessageA(QString message) // Recieved from A, to send to B
-{
-	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
-	emit sendMessageB(message);
-	ltyping->hide();
-}
-void TextWindow::gotMessageB(QString message)
-{
-	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
-	emit sendMessageA(message);
-	rtyping->hide();
-}
-void TextWindow::sentMessageA(QString message) // Sent to A, by B
-{
-	lconvo->append("<strong style='color:blue'>Stranger: </strong><span>"+message+"</span>");
-}
-void TextWindow::sentMessageB(QString message)
-{
-	rconvo->append("<strong style='color:red'>Stranger: </strong><span>"+message+"</span>");
-}
-void TextWindow::gotConnectA()
-{
-	lconvo->append("<strong>---<br>You're now chatting with a random stranger. Say hi!</strong>");
-}
-void TextWindow::gotConnectB()
-{
-	rconvo->append("<strong>---<br>You're now chatting with a random stranger. Say hi!</strong>");
-}
-void TextWindow::gotDisconnectA()
-{
-	lconvo->append("<strong>---<br>This stranger has disconnected.</strong>");
-}
-void TextWindow::gotDisconnectB()
-{
-	rconvo->append("<strong>---<br>This stranger has disconnected.</strong>");
-}
 void TextWindow::sendDisconnectA()
 {
-	emit disconnectA();
-	lconvo->append("<strong>---<br>This stranger has been disconnected.</strong>");
+	a->disconnect();
 }
 void TextWindow::sendDisconnectB()
 {
-	emit disconnectB();
-	rconvo->append("<strong>---<br>This stranger has been disconnected.</strong>");
+	b->disconnect();
 }
 void TextWindow::sendDisconnectE()
 {
@@ -380,42 +328,67 @@ void TextWindow::sendDisconnectE()
 void TextWindow::sendConnectA()
 {
 	sendDisconnectA();
-	a = new Stranger(Stranger::Text, instance->getServers());
-	initStrangers(true);
+	a->begin();
 }
 void TextWindow::sendConnectB()
 {
 	sendDisconnectB();
-	b = new Stranger(Stranger::Text, instance->getServers());
-	initStrangers(false);
+	b->begin();
 }
 void TextWindow::sendConnectE()
 {
 	sendDisconnectE();
-	a = new Stranger(Stranger::Text, instance->getServers());
-	b = new Stranger(Stranger::Text, instance->getServers());
-	initStrangers(true);
-	initStrangers(false);
+	sendConnectA();
+	sendConnectB();
+}
+
+void TextWindow::gotConnectA()
+{
+	lconvo->append("<strong>You're now chatting with a random stranger. Say hi!</strong>");
+}
+void TextWindow::gotConnectB()
+{
+	rconvo->append("<strong>You're now chatting with a random stranger. Say hi!</strong>");
+}
+void TextWindow::gotMessageA(QString message) // Recieved from A, to send to B
+{
+	lconvo->append("<strong style='color:red'>You: </strong><span>"+message+"</span>");
+	b->send(message);
+	ltyping->hide();
+}
+void TextWindow::gotMessageB(QString message)
+{
+	rconvo->append("<strong style='color:blue'>You: </strong><span>"+message+"</span>");
+	a->send(message);
+	rtyping->hide();
+}
+void TextWindow::gotDisconnectA()
+{
+	lconvo->append("<strong>This stranger has disconnected.</strong>");
+}
+void TextWindow::gotDisconnectB()
+{
+	rconvo->append("<strong>This stranger has disconnected.</strong>");
 }
 void TextWindow::gotTypingA()
 {
 	ltyping->show();
-	emit typestartB();
+	b->type();
 }
 void TextWindow::gotTypingB()
 {
 	rtyping->show();
-	emit typestartA();
+	a->type();
 }
 void TextWindow::gotStoppedA()
 {
 	ltyping->hide();
-	emit typestopB();
+	b->stop();
 }
 void TextWindow::gotStoppedB()
 {
 	rtyping->hide();
-	emit typestopA();
+	a->stop();
 }
 
 void TextWindow::spoolA()
