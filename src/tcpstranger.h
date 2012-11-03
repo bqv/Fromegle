@@ -1,30 +1,19 @@
-#ifndef _STRANGER_H_
-#define _STRANGER_H_
+#ifndef _TCPSTRANGER_H_
+#define _TCPSTRANGER_H_
 
-#include <QMutexLocker>
 #include <QDataStream>
-#include <QStringList>
 #include <QTcpSocket>
 #include <QByteArray>
-#include <QVariant>
-#include <QObject>
-#include <QString>
-#include <cstdlib>
-#include <QDebug>
-#include <QMutex>
-#include <QList>
 
-#include "json.h"
-#include "thread.h"
+#include "stranger.h"
 
-class Stranger : public QThread
+class TCPStranger : public Stranger
 {
 	Q_OBJECT
 
 	public:
-		enum StrangerType { Text, Spy, Question, Video };
-		Stranger(StrangerType = Text, QStringList = QStringList());
-		~Stranger();
+		TCPStranger(QStringList = QStringList());
+		~TCPStranger();
 	
 	public slots:
 		void begin();
@@ -41,17 +30,20 @@ class Stranger : public QThread
 		void typing();
 		void stopped();
 
-	private:
+	private slots:
 		void run();
+
+	private:
 		void writePacket(QString, QString = QString());
 		QString readString(short);
 		QString randomServer();
 
 	private:
 		mutable QMutex mutex;
-		const StrangerType s_type;
+		const Type s_type;
 		QStringList servers;
 		QString current;
+		T thread;
 		QTcpSocket *socket;
 		bool active;
 };

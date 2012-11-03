@@ -1,41 +1,35 @@
-#ifndef _STRANGER_H_
-#define _STRANGER_H_
+#ifndef _HTTPSTRANGER_H_
+#define _HTTPSTRANGER_H_
 
-#include <QStringList>
 #include <QVariant>
-#include <QObject>
-#include <QString>
-#include <cstdlib>
-#include <QDebug>
 #include <QList>
 
 #include "connection.h"
 #include "json.h"
-#include "thread.h"
+#include "stranger.h"
 
-class Stranger : public QObject
+class HTTPStranger : public Stranger
 {
 	Q_OBJECT
 
 	public:
-		enum StrangerType { Text, Spy, Question, Video };
-		Stranger(StrangerType = Text, QStringList = QStringList());
-		~Stranger();
-		QString getID();
-
-	signals:
-		void recieved(QString);
-		void sent(QString);
-		void disconnected();
-		void connected();
-		void typing();
-		void stopped();
+		HTTPStranger(QStringList = QStringList());
+		~HTTPStranger();
 
 	public slots:
+		void begin();
 		void send(QString);
 		void disconnect();
-		void typestart();
-		void typestop();
+		void type();
+		void stop();
+
+	signals:
+		void connected();
+		void waiting();
+		void message(QString);
+		void disconnected();
+		void typing();
+		void stopped();
 
 	private slots:
 		void run();
@@ -45,7 +39,8 @@ class Stranger : public QObject
 		QString randomServer();
 
 	private:
-		const StrangerType type;
+		mutable QMutex mutex;
+		const Type s_type;
 		QStringList servers;
 		QString current;
 		QString id;

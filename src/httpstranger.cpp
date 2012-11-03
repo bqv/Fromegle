@@ -1,36 +1,33 @@
-#include "stranger.h"
+#include "httpstranger.h"
 
-Stranger::Stranger(StrangerType t, QStringList l) : type(t),
-													servers(l),
-													thread()
+HTTPStranger::HTTPStranger(QStringList l) : s_type(HTTP),
+											servers(l),
+											thread()
 {
 	connect(&thread, SIGNAL(started()), this, SLOT(run()));
 	this->moveToThread(&thread);
+}
+
+HTTPStranger::~HTTPStranger()
+{
+	;
+}
+
+void HTTPStranger::begin()
+{
 	thread.start();
 }
 
-Stranger::~Stranger()
-{
-	thread.quit();
-}
-
-QString Stranger::getID()
-{
-	return id;
-}
-
-void Stranger::send(QString message)
+void HTTPStranger::send(QString message)
 {
 	Connection *tconn = new Connection(current);
 	QString msg = QUrl::toPercentEncoding(message);
 	tconn->addParam("id", id);
 	tconn->addParam("msg", msg);
-	QString response = tconn->post("/send").data();
-	if(response == "win")
-		emit sent(message);
+	tconn->post("/send").data();
 }
 
-void Stranger::disconnect()
+void HTTPStranger::disconnect()
 {
 	Connection *tconn = new Connection(current);
 	tconn->addParam("id", id);
@@ -38,24 +35,23 @@ void Stranger::disconnect()
 	active = false;
 }
 
-void Stranger::typestart()
+void HTTPStranger::type()
 {
 	Connection *tconn = new Connection(current);
 	tconn->addParam("id", id);
 	QString response = tconn->post("/typing").data();
-	active = false;
 }
 
-void Stranger::typestop()
+void HTTPStranger::stop()
 {
 	Connection *tconn = new Connection(current);
 	tconn->addParam("id", id);
 	QString response = tconn->post("/stoppedtyping").data();
-	active = false;
 }
 
-void Stranger::run()
+void HTTPStranger::run()
 {
+	qDebug() << "HAJIMASHOU";
 	current = randomServer();
 	conn = new Connection(current);
 	QByteArray data = conn->get("/start").data();
@@ -64,6 +60,7 @@ void Stranger::run()
 		QByteArray data = conn->get("/start").data();
 	}
 	id = JSON(data.data()).getSerial().toString();
+	qDebug() << id;
 	while(active)
 	{
 		conn->addParam("id", id);
@@ -83,26 +80,22 @@ void Stranger::run()
 	}
 }
 
-void Stranger::parse(QStringList event)
+void HTTPStranger::parse(QStringList event)
 {
 	QString type = event[0];
 	if(type == "gotMessage")
 	{
 		QString data = event[1];
-		emit recieved(data);
+		emit message(data);
 	}
 	else if(type == "typing")
-	{
 		emit typing();
-	}
 	else if(type == "stoppedTyping")
-	{
 		emit stopped();
-	}
 	else if(type == "connected")
-	{
 		emit connected();
-	}
+	else if(type == "waiting")
+		emit waiting();
 	else if(type == "strangerDisconnected")
 	{
 		emit disconnected();
@@ -110,7 +103,7 @@ void Stranger::parse(QStringList event)
 	}
 }
 
-QString Stranger::randomServer()
+QString HTTPStranger::randomServer()
 {
 	return servers[rand() % servers.size()];
 }

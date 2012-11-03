@@ -119,7 +119,7 @@ void TextWindow::onClose()
 
 void TextWindow::initStrangers()
 {
-	a = new Stranger(Stranger::Text, instance->getServers());
+	a = new HTTPStranger(instance->getServers());
 	{
 		connect(a, SIGNAL(connected()), this, SLOT(gotConnectA()));
 		connect(a, SIGNAL(message(QString)), this, SLOT(gotMessageA(QString)));
@@ -128,7 +128,7 @@ void TextWindow::initStrangers()
 		connect(a, SIGNAL(stopped()), this, SLOT(gotStoppedA()));
 	}
 	a->begin();
-	b = new Stranger(Stranger::Text, instance->getServers());
+	b = new HTTPStranger(instance->getServers());
 	{
 		connect(b, SIGNAL(connected()), this, SLOT(gotConnectB()));
 		connect(b, SIGNAL(message(QString)), this, SLOT(gotMessageB(QString)));

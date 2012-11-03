@@ -1,18 +1,21 @@
-#include "stranger.h"
+#include "tcpstranger.h"
 
-Stranger::Stranger(StrangerType t, QStringList l) : s_type(t),
-													servers(l)
+TCPStranger::TCPStranger(QStringList l) : s_type(TCP),
+										  servers(l),
+										  thread()
 {
+	connect(&thread, SIGNAL(started()), this, SLOT(run()));
+	this->moveToThread(&thread);
 	socket = new QTcpSocket;
 	active = false;
 }
 
-Stranger::~Stranger()
+TCPStranger::~TCPStranger()
 {
 	;
 }
 
-void Stranger::begin()
+void TCPStranger::begin()
 {
 	if(socket->state() != QAbstractSocket::ConnectedState)
 	{
@@ -23,36 +26,36 @@ void Stranger::begin()
 	}
 	writePacket("omegleStart");
 	active = true;
-	start();
+	thread.start();
 }
 
-void Stranger::send(QString message)
+void TCPStranger::send(QString message)
 {
 	writePacket("s", message);
 }
 
-void Stranger::disconnect()
+void TCPStranger::disconnect()
 {
 	writePacket("d");
 	active = false;
 }
 
-void Stranger::type()
+void TCPStranger::type()
 {
 	writePacket("t");
 }
 
-void Stranger::stop()
+void TCPStranger::stop()
 {
 	writePacket("st");
 }
 
-void Stranger::run()
+void TCPStranger::run()
 {
 	QString opcode, operand;
+	quint8 byte; quint16 nibble;
 	while(socket->state() == QAbstractSocket::ConnectedState && active)
 	{
-		quint8 byte; quint16 nibble;
 		socket->waitForReadyRead(-1);
 		QDataStream(socket->read(1)) >> byte;
 		opcode = readString(byte);
@@ -64,15 +67,15 @@ void Stranger::run()
 		else if(opcode == "m") emit message(operand);
 		else if(opcode == "t") emit typing();
 		else if(opcode == "st") emit stopped();
-		else if(opcode == "d") break;
-		qDebug() << "Opcode: " << opcode
+		else if(opcode == "d") active = false;
+		else qDebug() << "Opcode: " << opcode
 			<< "\nData: " << operand;
-		
 	}
 	emit disconnected();
+	thread.terminate();
 }
 
-void Stranger::writePacket(QString action, QString data)
+void TCPStranger::writePacket(QString action, QString data)
 {
 	QMutexLocker locker(&mutex);
 	QByteArray opcode;
@@ -90,14 +93,14 @@ void Stranger::writePacket(QString action, QString data)
 	else socket->write(QByteArray(2, quint16(0)));
 }
 
-QString Stranger::readString(short length)
+QString TCPStranger::readString(short length)
 {
 	if(length == 0) return QString();
 	QByteArray string = socket->read(length);
 	return string;
 }
 
-QString Stranger::randomServer()
+QString TCPStranger::randomServer()
 {
 	return servers[rand() % servers.size()];
 }
